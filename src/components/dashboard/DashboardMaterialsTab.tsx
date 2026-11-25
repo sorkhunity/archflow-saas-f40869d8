@@ -73,28 +73,28 @@ export const DashboardMaterialsTab: React.FC<DashboardMaterialsTabProps> = ({ on
                 <span className="bg-[#C86D51]/10 text-[#C86D51] px-3 py-1 rounded-full text-[10px] font-bold">
                   {materialCategoryLabels[mat.category] || mat.category}
                 </span>
-                <span className="text-xs font-bold text-[#2E6F40] bg-[#2E6F40]/10 px-2.5 py-1 rounded-lg">
-                  {mat.aiScore}% مطابقت با سبک
+                <span className="text-xs text-stone-500 font-medium">{mat.brand}</span>
+              </div>
+              <div className="h-40 rounded-2xl overflow-hidden bg-stone-100">
+                <img src={mat.image} alt={mat.name} className="w-full h-full object-cover hover:scale-105 transition duration-500" />
+              </div>
+              <h3 className="font-bold text-stone-900 text-sm">{mat.name}</h3>
+              <p className="text-xs text-stone-500 line-clamp-2">{mat.description}</p>
+            </div>
+            
+            <div className="pt-4 border-t border-stone-100 flex items-center justify-between">
+              <div>
+                <span className="text-[10px] text-stone-400 block">قیمت واحد</span>
+                <span className="text-sm font-black text-[#C86D51]">
+                  {(mat.price ?? 0).toLocaleString('fa-IR')} <span className="text-[10px] font-normal text-stone-600">تومان {mat.unit}</span>
                 </span>
               </div>
-              <h3 className="text-base font-bold text-[#2C2A29]">{mat.name}</h3>
-              <p className="text-xs text-[#6B5B52] line-clamp-2">{mat.description}</p>
-            </div>
-
-            <div className="space-y-3 pt-4 border-t border-[#E3A38F]/20">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-[#6B5B52]">قیمت واحد:</span>
-                <span className="text-xs font-black text-[#2C2A29]">{(mat.price ?? 0).toLocaleString('fa-IR')} تومان / {mat.unit}</span>
-              </div>
               <button
-                onClick={() => {
-                  onAddToCart(mat);
-                  showToast(`${mat.name} به سبد خرید افزوده شد.`);
-                }}
-                className="w-full bg-[#C86D51] hover:bg-[#b05b41] text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition cursor-pointer"
+                onClick={() => onAddToCart(mat)}
+                className="bg-[#C86D51] hover:bg-[#b05b41] text-white p-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
               >
                 <ShoppingBag className="w-4 h-4" />
-                <span>افزودن به سبد پروژه</span>
+                <span>افزودن</span>
               </button>
             </div>
           </div>
