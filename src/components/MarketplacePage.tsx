@@ -44,7 +44,7 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({
         <span className="text-xs font-bold text-amber-700 bg-amber-500/15 px-3 py-1 rounded-full border border-amber-500/30">
           بازارچه متریال آرک‌فلو
         </span>
-        <h1 className="text-3xl sm:text-4xl font-black text-stone-900 font-heading">
+        <h1 className="text-3xl sm:text-4xl font-black text-white font-heading">
           متریال استاندارد با قیمت‌های به‌روز بازار ایران
         </h1>
         <p className="text-sm text-stone-600 max-w-2xl">

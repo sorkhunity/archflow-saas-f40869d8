@@ -1,4 +1,6 @@
 import { ProductItem, PersonaProfile, Persona, Project } from '../types';
+import { communityDiscussions } from './communityData';
+export { communityDiscussions };
 
 export const materialCategoryLabels: Record<string, string> = {
   wood: 'چوب و کفپوش',

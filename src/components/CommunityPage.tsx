@@ -1,344 +1,292 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { MessageSquare, PlusCircle, CheckCircle, Sparkles, X, ThumbsUp, MessageCircle } from 'lucide-react';
-import { Persona } from '../types';
-import { discussionTagLabels, discussionTagKeys } from '../data/mockData';
+import React, { useState, useEffect } from 'react';
+import { Search, Plus, Filter, MessageCircle, ThumbsUp, Users, Award, Sparkles, CheckCircle2, X, Loader2 } from 'lucide-react';
+import { communityDiscussions, discussionTagLabels, discussionTagKeys, DiscussionTagKey } from '../data/communityData';
+import { DiscussionItem } from './DiscussionItem';
 
-interface CommunityPageProps {
-  onNavigate: (tab: string) => void;
-  onSelectPersona: (p: Persona) => void;
-}
-
-export const CommunityPage: React.FC<CommunityPageProps> = ({ onNavigate, onSelectPersona }) => {
-  const [newDiscussionOpen, setNewDiscussionOpen] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [selectedTagKey, setSelectedTagKey] = useState<string>('material');
-  const [activeFilterTagKey, setActiveFilterTagKey] = useState<string>('all');
+export const CommunityPage: React.FC = () => {
+  const [selectedTag, setSelectedTag] = useState<DiscussionTagKey>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [likedMap, setLikedMap] = useState<Record<string, boolean>>({});
+  const [newDiscussionModal, setNewDiscussionModal] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
+  const [newContent, setNewContent] = useState('');
+  const [newTag, setNewTag] = useState<DiscussionTagKey>('material');
+  const [discussions, setDiscussions] = useState(communityDiscussions);
+  const [successToast, setSuccessToast] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const modalRef = useRef<HTMLDivElement>(null);
-  const firstInputRef = useRef<HTMLInputElement>(null);
-
-  const [discussions, setDiscussions] = useState([
-    {
-      id: '1',
-      author: 'مهندس سهرابی',
-      avatar: 'س',
-      role: 'معمار ارشد',
-      title: 'بهترین ترکیب متریال برای کفپوش واحدهای مسکونی با بودجه متوسط چیست؟',
-      content: 'ما در حال طراحی یک پروژه مسکونی ۱۲ واحدی هستیم و کارفرما روی قیمت تمام شده حساس است...',
-      tagKeys: ['material', 'flooring', 'budget'],
-      replies: 24,
-      likes: 56,
-      time: '۲ ساعت پیش'
-    },
-    {
-      id: '2',
-      author: 'یلدا کریمی',
-      avatar: 'ی',
-      role: 'مالک و بازسازی‌کننده',
-      title: 'تجربه من از استفاده از هوش مصنوعی آرک‌فلو برای انتخاب رنگ کابینت',
-      content: 'سلام دوستان، من با ابزار هوش مصنوعی تونستم پالت رنگی آشپزخونه رو به راحتی نهایی کنم...',
-      tagKeys: ['ux', 'color', 'kitchen'],
-      replies: 12,
-      likes: 38,
-      time: '۵ ساعت پیش'
-    },
-    {
-      id: '3',
-      author: 'کوروش راد',
-      avatar: 'ک',
-      role: 'پیمانکار ساختمان',
-      title: 'نکات کلیدی در تنظیم پیش‌فاکتور مصالح و کنترل هزینه‌های پنهان',
-      content: 'در قراردادهای جدید بازسازی، نوسانات قیمت مصالح چالش‌برانگیز شده است...',
-      tagKeys: ['invoice', 'budget', 'sales'],
-      replies: 19,
-      likes: 45,
-      time: 'دیروز'
-    }
-  ]);
-
+  // Escape key handler and body scroll lock for modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && newDiscussionOpen) {
-        setNewDiscussionOpen(false);
+      if (e.key === 'Escape' && newDiscussionModal) {
+        setNewDiscussionModal(false);
       }
     };
-    if (newDiscussionOpen) {
+    if (newDiscussionModal) {
       document.body.style.overflow = 'hidden';
       window.addEventListener('keydown', handleKeyDown);
-      setTimeout(() => {
-        firstInputRef.current?.focus();
-      }, 50);
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = 'unset';
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = 'unset';
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [newDiscussionOpen]);
+  }, [newDiscussionModal]);
 
   const handleLike = (id: string) => {
-    setDiscussions(prev => prev.map(d => d.id === id ? { ...d, likes: d.likes + 1 } : d));
+    setLikedMap(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const handleSubmitDiscussion = (e: React.FormEvent) => {
+  const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !content.trim()) return;
+    if (!newTitle.trim() || !newContent.trim() || isSubmitting) return;
 
     setIsSubmitting(true);
     setTimeout(() => {
-      const newDisc = {
-        id: Date.now().toString(),
-        author: 'کاربر همکار',
-        avatar: 'ک',
-        role: 'طراح داخلی',
-        title: title.trim(),
-        content: content.trim(),
-        tagKeys: [selectedTagKey],
+      const newItem = {
+        id: String(Date.now()),
+        author: 'شما (مهندس معمار)',
+        avatar: '/__l5e/assets-v1/37676bb5-fabf-42e6-97a0-a98cdbd1de16/prototype-workplace.jpg',
+        role: 'کاربر ارشد',
+        title: newTitle.trim(),
+        content: newContent.trim(),
+        tagKeys: [newTag],
         replies: 0,
-        likes: 1,
-        time: 'همین الان'
+        likes: 0,
+        time: 'لحظاتی پیش'
       };
-      setDiscussions([newDisc, ...discussions]);
+      setDiscussions([newItem, ...discussions]);
       setIsSubmitting(false);
-      setNewDiscussionOpen(false);
-      setTitle('');
-      setContent('');
-      setSuccessMessage('بحث جدید با موفقیت منتشر شد.');
-      setTimeout(() => setSuccessMessage(null), 4000);
-    }, 400);
+      setNewDiscussionModal(false);
+      setNewTitle('');
+      setNewContent('');
+      setNewTag('material');
+      setSuccessToast(true);
+      setTimeout(() => setSuccessToast(false), 3000);
+    }, 600);
   };
 
-  const filteredDiscussions = activeFilterTagKey === 'all'
-    ? discussions
-    : discussions.filter(d => d.tagKeys.includes(activeFilterTagKey));
+  const filtered = discussions.filter(item => {
+    const matchesTag = selectedTag === 'all' || item.tagKeys.includes(selectedTag);
+    const matchesQuery = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                         item.content.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesTag && matchesQuery;
+  });
 
   return (
-    <div className="min-h-dvh bg-stone-50 pb-16 pt-8 font-sans" dir="rtl">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {successMessage && (
-          <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl flex items-center gap-3 shadow-sm animate-fade-in" role="status" aria-live="polite">
-            <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-            <span className="font-medium text-sm">{successMessage}</span>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8" dir="rtl">
+      {/* Toast */}
+      {successToast && (
+        <div className="fixed bottom-6 start-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 animate-fade-in" role="status">
+          <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
+          <span className="text-sm font-bold">بحث جدید با موفقیت ثبت شد و به جامعه اضافه گردید.</span>
+        </div>
+      )}
+
+      {/* Hero section */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-l from-stone-900 via-stone-800 to-amber-950 p-8 sm:p-12 text-white border border-stone-800 shadow-xl">
+        <div className="absolute end-0 top-0 bottom-0 w-1/3 opacity-20 hidden md:block">
+          <img 
+            src="/__l5e/assets-v1/37676bb5-fabf-42e6-97a0-a98cdbd1de16/prototype-workplace.jpg" 
+            alt="جامعه معماران" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="relative z-10 max-w-2xl space-y-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold border border-amber-500/30">
+            <Sparkles className="w-3.5 h-3.5" />
+            جامعه تخصصی معماران و سازندگان ایران
           </div>
-        )}
-
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 bg-white p-6 rounded-2xl shadow-xs border border-stone-200">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-semibold mb-2">
-              <Sparkles className="w-3.5 h-3.5" />
-              جامعه حرفه‌ای طراحان و مجریان
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">انجمن تبادل نظر و تجربیات</h1>
-            <p className="text-sm text-stone-600 mt-1">سوالات فنی بپرسید، نمونه کارهای خود را به اشتراک بگذارید و از تجربیات همکاران صنف استفاده کنید.</p>
-          </div>
-          <button
-            onClick={() => setNewDiscussionOpen(true)}
-            className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-medium text-sm transition-all shadow-sm cursor-pointer active:scale-95"
-          >
-            <PlusCircle className="w-5 h-5" />
-            ارسال بحث جدید
-          </button>
-        </div>
-
-        {/* Filter Tags */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6 no-scrollbar">
-          <button
-            onClick={() => setActiveFilterTagKey('all')}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-              activeFilterTagKey === 'all'
-                ? 'bg-stone-900 text-white shadow-xs'
-                : 'bg-white text-stone-600 border border-stone-200 hover:bg-stone-100'
-            }`}
-          >
-            همه موضوعات ({discussions.length})
-          </button>
-          {discussionTagKeys.map(tagKey => {
-            const count = discussions.filter(d => d.tagKeys.includes(tagKey)).length;
-            return (
-              <button
-                key={tagKey}
-                onClick={() => setActiveFilterTagKey(tagKey)}
-                className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
-                  activeFilterTagKey === tagKey
-                    ? 'bg-amber-600 text-white shadow-xs'
-                    : 'bg-white text-stone-600 border border-stone-200 hover:bg-stone-100'
-                }`}
-              >
-                <span>{discussionTagLabels[tagKey] || tagKey}</span>
-                {count > 0 && <span className="opacity-80 text-[10px]">({count})</span>}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Discussions List */}
-        <div className="space-y-4">
-          {filteredDiscussions.length === 0 ? (
-            <div className="bg-white rounded-2xl p-12 text-center border border-stone-200 shadow-xs">
-              <MessageSquare className="w-12 h-12 text-stone-300 mx-auto mb-3" />
-              <h3 className="text-base font-bold text-stone-800">موضوعی با این تگ یافت نشد</h3>
-              <p className="text-xs text-stone-500 mt-1">اولین نف باشید که در این دسته بندی بحث ایجاد می‌کند.</p>
-              <button
-                onClick={() => { setSelectedTagKey(activeFilterTagKey === 'all' ? 'material' : activeFilterTagKey); setNewDiscussionOpen(true); }}
-                className="mt-4 px-4 py-2 bg-amber-600 text-white text-xs font-medium rounded-xl hover:bg-amber-700 transition-colors inline-block"
-              >
-                ایجاد بحث جدید در این موضوع
-              </button>
-            </div>
-          ) : (
-            filteredDiscussions.map(disc => (
-              <div key={disc.id} className="bg-white rounded-2xl p-6 border border-stone-200 shadow-xs hover:border-amber-300 transition-all">
-                <div className="flex items-start justify-between gap-4 mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-800 font-bold flex items-center justify-center text-sm shadow-xs">
-                      {disc.avatar}
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-bold text-stone-900">{disc.author}</h4>
-                      <p className="text-xs text-stone-500">{disc.role} • {disc.time}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5 flex-wrap justify-end">
-                    {disc.tagKeys.map(tKey => (
-                      <span key={tKey} className="px-2.5 py-1 rounded-lg bg-stone-100 text-stone-700 text-[11px] font-medium">
-                        {discussionTagLabels[tKey] || tKey}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <h3 className="text-base font-bold text-stone-900 mb-2 hover:text-amber-600 transition-colors cursor-pointer">
-                  {disc.title}
-                </h3>
-                <p className="text-sm text-stone-600 mb-4 leading-relaxed line-clamp-2">
-                  {disc.content}
-                </p>
-
-                <div className="flex items-center justify-between pt-4 border-t border-stone-100 text-xs text-stone-500">
-                  <div className="flex items-center gap-4">
-                    <button
-                      onClick={() => handleLike(disc.id)}
-                      className="flex items-center gap-1.5 hover:text-amber-600 transition-colors cursor-pointer group p-1"
-                    >
-                      <ThumbsUp className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                      <span>{disc.likes} پسند</span>
-                    </button>
-                    <div className="flex items-center gap-1.5">
-                      <MessageCircle className="w-4 h-4 text-stone-400" />
-                      <span>{disc.replies} پاسخ</span>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => {
-                      onNavigate('community-detail');
-                    }}
-                    className="text-amber-600 hover:text-amber-700 font-semibold cursor-pointer"
-                  >
-                    مشاهده جزئیات و گفتگو ←
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-
-        {/* Modal for New Discussion */}
-        {newDiscussionOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs animate-fade-in" role="dialog" aria-modal="true" aria-label="ارسال بحث جدید">
-            <div 
-              ref={modalRef}
-              className="bg-white rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden border border-stone-200 animate-scale-up"
-              onClick={e => e.stopPropagation()}
+          <h1 className="text-3xl sm:text-5xl font-black font-heading tracking-tight">
+            پرسش، تبادل نظر و هم‌فکری در پروژه‌های معماری
+          </h1>
+          <p className="text-sm sm:text-base text-stone-300 leading-relaxed">
+            با هزاران مهندس، معمار، طراح داخلی و پیمانکار در ارتباط باشید، تجربیات اجرایی را به اشتراک بگذارید و پاسخ مسائل فنی خود را بیابید.
+          </p>
+          <div className="pt-2">
+            <button
+              onClick={() => setNewDiscussionModal(true)}
+              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold px-6 py-3 rounded-2xl shadow-lg transition-all active:scale-95"
             >
-              <div className="flex items-center justify-between p-5 border-b border-stone-100 bg-stone-50">
-                <div className="flex items-center gap-2">
-                  <MessageSquare className="w-5 h-5 text-amber-600" />
-                  <h3 className="text-base font-bold text-stone-900">ایجاد موضوع جدید در انجمن</h3>
-                </div>
-                <button
-                  onClick={() => setNewDiscussionOpen(false)}
-                  className="p-1.5 text-stone-400 hover:text-stone-700 rounded-lg transition-colors cursor-pointer"
-                  aria-label="بستن"
+              <Plus className="w-5 h-5" />
+              <span>ایجاد بحث جدید</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Filter and Search */}
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 no-scrollbar">
+          {discussionTagKeys.map(tagKey => (
+            <button
+              key={tagKey}
+              onClick={() => setSelectedTag(tagKey)}
+              className={`px-4 py-2 rounded-2xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap ${
+                selectedTag === tagKey
+                  ? 'bg-amber-500 text-stone-950 shadow-md shadow-amber-500/20'
+                  : 'bg-white dark:bg-stone-900 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-800 hover:border-amber-500/50'
+              }`}
+            >
+              {discussionTagLabels[tagKey]}
+            </button>
+          ))}
+        </div>
+
+        <div className="relative w-full md:w-80">
+          <label htmlFor="search-discussions" className="sr-only">جستجو در بحث‌ها</label>
+          <Search className="absolute start-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+          <input
+            id="search-discussions"
+            type="text"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="جستجو در عنوان یا متن بحث‌ها..."
+            className="w-full ps-10 pe-4 py-2.5 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl text-sm text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+          />
+        </div>
+      </div>
+
+      {/* Discussion List */}
+      <div className="space-y-6">
+        {filtered.length === 0 ? (
+          <div className="text-center py-16 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 p-8 space-y-4">
+            <MessageCircle className="w-12 h-12 text-stone-400 mx-auto" />
+            <h3 className="text-lg font-bold text-stone-900 dark:text-white">هیچ بحثی یافت نشد</h3>
+            <p className="text-sm text-stone-500 max-w-sm mx-auto">
+              با عبارت جستجوی دیگری تلاش کنید یا موضوع جدیدی را آغاز نمایید.
+            </p>
+            <button
+              onClick={() => { setSearchQuery(''); setSelectedTag('all'); }}
+              className="px-4 py-2 bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 rounded-xl text-sm font-semibold hover:bg-stone-200 transition-colors"
+            >
+              پاک کردن فیلترها
+            </button>
+          </div>
+        ) : (
+          filtered.map(item => (
+            <DiscussionItem
+              key={item.id}
+              {...item}
+              liked={!!likedMap[item.id]}
+              onLike={handleLike}
+            />
+          ))
+        )}
+      </div>
+
+      {/* New Discussion Modal */}
+      {newDiscussionModal && (
+        <div 
+          className="fixed inset-0 z-50 bg-stone-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in"
+          onClick={() => setNewDiscussionModal(false)}
+        >
+          <div 
+            className="bg-white dark:bg-stone-900 rounded-3xl max-w-2xl w-full p-6 sm:p-8 border border-stone-200 dark:border-stone-800 shadow-2xl relative space-y-6 my-8"
+            onClick={e => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
+          >
+            <div className="flex items-center justify-between pb-4 border-b border-stone-100 dark:border-stone-800">
+              <h2 id="modal-title" className="text-xl font-bold text-stone-900 dark:text-white flex items-center gap-2">
+                <MessageCircle className="w-5 h-5 text-amber-500" />
+                شروع بحث جدید در جامعه
+              </h2>
+              <button
+                onClick={() => setNewDiscussionModal(false)}
+                aria-label="بستن پنجره"
+                className="p-2 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreate} className="space-y-5">
+              <div className="space-y-2">
+                <label htmlFor="discussion-title" className="block text-sm font-bold text-stone-900 dark:text-white">
+                  عنوان بحث <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="discussion-title"
+                  type="text"
+                  required
+                  maxLength={120}
+                  value={newTitle}
+                  onChange={e => setNewTitle(e.target.value)}
+                  placeholder="مثلاً: بهترین روش عایق‌کاری صوتی دیواهای مشترک..."
+                  className="w-full px-4 py-3 bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-2xl text-sm text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="discussion-tag" className="block text-sm font-bold text-stone-900 dark:text-white">
+                  موضوع / تگ اصلی <span className="text-red-500">*</span>
+                </label>
+                <select
+                  id="discussion-tag"
+                  value={newTag}
+                  onChange={e => setNewTag(e.target.value as DiscussionTagKey)}
+                  className="w-full px-4 py-3 bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-2xl text-sm text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
                 >
-                  <X className="w-5 h-5" />
+                  {discussionTagKeys.filter(k => k !== 'all').map(key => (
+                    <option key={key} value={key}>
+                      {discussionTagLabels[key]}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <label htmlFor="discussion-content" className="block text-sm font-bold text-stone-900 dark:text-white">
+                    متن پرسش یا توضیحات <span className="text-red-500">*</span>
+                  </label>
+                  <span className={`text-xs ${newContent.length > 950 ? 'text-amber-600 font-bold' : 'text-stone-400'}`}>
+                    {newContent.length}/1000 کاراکتر
+                  </span>
+                </div>
+                <textarea
+                  id="discussion-content"
+                  required
+                  rows={5}
+                  maxLength={1000}
+                  value={newContent}
+                  onChange={e => setNewContent(e.target.value)}
+                  placeholder="جزئیات پروژه، سوال تخصصی یا تجربیات خود را اینجا بنویسید..."
+                  className="w-full px-4 py-3 bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-2xl text-sm text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-stone-100 dark:border-stone-800">
+                <button
+                  type="button"
+                  onClick={() => setNewDiscussionModal(false)}
+                  disabled={isSubmitting}
+                  className="px-5 py-2.5 text-sm font-semibold text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-2xl transition-colors"
+                >
+                  انصراف
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-amber-500 hover:bg-amber-600 disabled:bg-amber-500/60 text-stone-950 font-bold text-sm rounded-2xl shadow-md transition-all active:scale-95"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>در حال ثبت...</span>
+                    </>
+                  ) : (
+                    <span>انتشار بحث</span>
+                  )}
                 </button>
               </div>
-
-              <form onSubmit={handleSubmitDiscussion} className="p-6 space-y-4">
-                <div>
-                  <label htmlFor="discussion-title" className="block text-xs font-semibold text-stone-700 mb-1.5">
-                    عنوان سوال یا موضوع <span className="text-rose-500">*</span>
-                  </label>
-                  <input
-                    ref={firstInputRef}
-                    id="discussion-title"
-                    type="text"
-                    required
-                    value={title}
-                    onChange={e => setTitle(e.target.value)}
-                    placeholder="مثلا: بهترین متریال ضد آب برای کابینت روشویی کدام است؟"
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-600"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="discussion-tag" className="block text-xs font-semibold text-stone-700 mb-1.5">
-                    موضوع اصلی
-                  </label>
-                  <select
-                    id="discussion-tag"
-                    value={selectedTagKey}
-                    onChange={e => setSelectedTagKey(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-600 bg-white"
-                  >
-                    {discussionTagKeys.map(tk => (
-                      <option key={tk} value={tk}>{discussionTagLabels[tk]}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label htmlFor="discussion-content" className="block text-xs font-semibold text-stone-700 mb-1.5">
-                    متن مشروح <span className="text-rose-500">*</span>
-                  </label>
-                  <textarea
-                    id="discussion-content"
-                    required
-                    rows={5}
-                    value={content}
-                    onChange={e => setContent(e.target.value)}
-                    placeholder="جزئیات پروژه، ابهامات یا تجربه خود را به طور کامل بنویسید..."
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-600 resize-none"
-                  />
-                </div>
-
-                <div className="flex items-center justify-end gap-3 pt-4 border-t border-stone-100">
-                  <button
-                    type="button"
-                    onClick={() => setNewDiscussionOpen(false)}
-                    className="px-5 py-2.5 rounded-xl text-stone-600 hover:bg-stone-100 text-sm font-medium transition-colors cursor-pointer"
-                  >
-                    انصراف
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting || !title.trim() || !content.trim()}
-                    className="px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium transition-all shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
-                  >
-                    {isSubmitting ? 'در حال ارسال...' : 'انتشار موضوع'}
-                  </button>
-                </div>
-              </form>
-            </div>
+            </form>
           </div>
-        )}
-
-      </div>
+        </div>
+      )}
     </div>
   );
 };

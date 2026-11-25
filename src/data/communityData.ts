@@ -71,3 +71,5 @@ export const initialDiscussions: DiscussionItem[] = [
     time: 'دیروز'
   }
 ];
+
+export const communityDiscussions = initialDiscussions;
