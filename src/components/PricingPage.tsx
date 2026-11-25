@@ -64,7 +64,7 @@ export const PricingPage: React.FC<PricingPageProps> = ({ onNavigate, onSelectPe
         <h1 className="text-3xl sm:text-4xl font-black text-stone-900 font-heading">
           پلن مناسب پروژه خود را انتخاب کنید
         </h1>
-        <p className="text-base text-stone-600">
+        <p className="text-base text-white">
           از بازسازی یک آپارتمان کوچک تا مدیریت ده‌ها پروژه معماری، آرک‌فلو ابزار دقیق هوش مصنوعی را در اختیار شما می‌گذارد.
         </p>
       </div>
