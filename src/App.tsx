@@ -18,7 +18,7 @@ export default function App() {
   const [cartItems, setCartItems] = useState<MaterialItem[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Search state with normalisation and debounce (Fix 2)
+  // Search state with normalisation and debounce
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
 
@@ -43,7 +43,7 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#/', '').replace('#', '');
-      if (['home', 'dashboard', 'profiling', 'marketplace', 'community', 'pricing', 'project'].includes(hash)) {
+      if (['home', 'dashboard', 'profiling', 'marketplace', 'community', 'pricing'].includes(hash)) {
         setActiveTab(hash);
       }
     };
@@ -52,8 +52,8 @@ export default function App() {
       handleHashChange();
     }
 
-    window.addEventListener('popstate', handleHashChange);
-    return () => window.removeEventListener('popstate', handleHashChange);
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
   const handleTabChange = (tab: string) => {
@@ -64,22 +64,20 @@ export default function App() {
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 3500);
+    setTimeout(() => setToastMessage(null), 3500);
   };
 
   const handleAddToCart = (item: MaterialItem) => {
     if (cartItems.some(i => i.id === item.id)) {
-      showToast('این متریال قبلاً به سبد خرید اضافه شده است.');
+      showToast('این متریال از قبل در سبد خرید شما موجود است.');
       return;
     }
-    setCartItems(prev => [...prev, item]);
+    setCartItems([...cartItems, item]);
     showToast(`متریال «${item.name}» به سبد خرید اضافه شد.`);
   };
 
   const handleRemoveCartItem = (id: string) => {
-    setCartItems(prev => prev.filter(item => item.id !== id));
+    setCartItems(cartItems.filter(item => item.id !== id));
     showToast('متریال از سبد خرید حذف شد.');
   };
 
@@ -88,11 +86,26 @@ export default function App() {
     showToast('سبد خرید خالی شد.');
   };
 
-  const currentProject = mockProjects[selectedPersona] || mockProjects['sara'];
+  const handleProceedCheckout = () => {
+    setCartOpen(false);
+    showToast('پیش‌فاکتور و لیست متریال با موفقیت ثبت شد. همکاران ما با شما تماس خواهند گرفت.');
+    setCartItems([]);
+  };
+
+  const currentProject = mockProjects[0];
 
   return (
-    <div className="min-h-dvh flex flex-col bg-[#FAF7F2] text-[#2D2826] font-sans antialiased selection:bg-[#C86D51] selection:text-white" dir="rtl">
-      {/* Header */}
+    <div className="min-h-dvh bg-[#FDFBF7] text-[#2C2A29] font-sans selection:bg-[#C86D51]/20 selection:text-[#C86D51] flex flex-col" dir="rtl">
+      
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 start-6 z-50 bg-[#2C2A29] text-[#FDFBF7] px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce border border-[#E3A38F]/30" role="status">
+          <CheckCircle2 className="w-5 h-5 text-[#C86D51] shrink-0" />
+          <span className="text-sm font-bold">{toastMessage}</span>
+        </div>
+      )}
+
+      {/* Navigation Header */}
       <Header
         activeTab={activeTab}
         setActiveTab={handleTabChange}
@@ -102,8 +115,8 @@ export default function App() {
         onSelectPersona={setSelectedPersona}
       />
 
-      {/* Main Container letting height grow and scroll (Fix 3) */}
-      <main className="flex-1 flex flex-col">
+      {/* Main Content Area */}
+      <main className="flex-1">
         {activeTab === 'home' && (
           <HomePage
             onNavigate={handleTabChange}
@@ -133,7 +146,6 @@ export default function App() {
           <MarketplacePage
             onAddToCart={handleAddToCart}
             onNavigate={handleTabChange}
-            showToast={showToast}
             searchQuery={debouncedSearch}
             setSearchQuery={setSearchQuery}
           />
@@ -152,61 +164,6 @@ export default function App() {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="bg-[#2D2826] text-[#F9F6F0] py-12 border-t border-[#E3A38F]/20 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#C86D51] text-white flex items-center justify-center font-bold text-lg">
-                الف
-              </div>
-              <span className="text-xl font-black tracking-tight">آرک فلو AI</span>
-            </div>
-            <p className="text-sm text-[#F9F6F0]/70 leading-relaxed">
-              پلتفرم هوش مصنوعی معماری و بازسازی مسکن، پیونددهنده رویاهای شما با استانداردهای مهندسی و بازار لحظه‌ای متریال.
-            </p>
-          </div>
-          <div>
-            <h4 className="font-bold text-base mb-4 text-[#E3A38F]">دسترسی سریع</h4>
-            <ul className="space-y-2 text-sm text-[#F9F6F0]/70">
-              <li><button onClick={() => handleTabChange('home')} className="hover:text-white transition">صفحه اصلی</button></li>
-              <li><button onClick={() => handleTabChange('profiling')} className="hover:text-white transition">پروفایلینگ خانواده</button></li>
-              <li><button onClick={() => handleTabChange('dashboard')} className="hover:text-white transition">داشبورد هوش مصنوعی</button></li>
-              <li><button onClick={() => handleTabChange('marketplace')} className="hover:text-white transition">بازارچه متریال</button></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold text-base mb-4 text-[#E3A38F]">جامعه و پشتیبانی</h4>
-            <ul className="space-y-2 text-sm text-[#F9F6F0]/70">
-              <li><button onClick={() => handleTabChange('community')} className="hover:text-white transition">انجمن معماران</button></li>
-              <li><button onClick={() => handleTabChange('pricing')} className="hover:text-white transition">تعرفه‌ها و اشتراک</button></li>
-              <li><a href="#/faq" onClick={(e) => { e.preventDefault(); showToast('بخش سوالات متداول به زودی فعال می‌شود.'); }} className="hover:text-white transition">سوالات متداول</a></li>
-              <li><a href="#/terms" onClick={(e) => { e.preventDefault(); showToast('قوانین استفاده از خدمات آرک‌فلو'); }} className="hover:text-white transition">قوانین و مقررات</a></li>
-            </ul>
-          </div>
-          <div className="space-y-4">
-            <h4 className="font-bold text-base mb-4 text-[#E3A38F]">خبرنامه مهندسی</h4>
-            <p className="text-xs text-[#F9F6F0]/70">برای دریافت آخرین تحلیل‌های بازار مسکن و متریال ثبت‌نام کنید.</p>
-            <div className="flex gap-2">
-              <input
-                type="email"
-                placeholder="ایمیل شما..."
-                className="bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#C86D51] flex-1"
-              />
-              <button
-                onClick={() => showToast('با موفقیت در خبرنامه ثبت‌نام شدید!')}
-                className="bg-[#C86D51] text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-[#b05b41] transition shrink-0"
-              >
-                عضویت
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-white/10 text-center text-xs text-[#F9F6F0]/50">
-          تمامی حقوق محفوظ است © ۱۴۰۳ - آرک‌فلو AI (ArchFlow AI)
-        </div>
-      </footer>
-
       {/* Cart Drawer */}
       <CartDrawer
         isOpen={cartOpen}
@@ -214,20 +171,63 @@ export default function App() {
         items={cartItems}
         onRemoveItem={handleRemoveCartItem}
         onClearCart={handleClearCart}
-        onProceed={() => {
-          setCartOpen(false);
-          showToast('پیش‌فاکتور با موفقیت نهایی شد و به بخش لجستیک ارسال گردید.');
-          setCartItems([]);
-        }}
+        onProceed={handleProceedCheckout}
       />
 
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed bottom-6 start-6 z-50 bg-[#2D2826] text-[#FAF7F2] px-5 py-3.5 rounded-2xl shadow-xl flex items-center gap-3 border border-[#E3A38F]/30 animate-fade-in" role="status" aria-live="polite">
-          <CheckCircle2 className="w-5 h-5 text-[#C86D51] shrink-0" />
-          <span className="text-sm font-medium">{toastMessage}</span>
+      {/* Footer */}
+      <footer className="bg-[#2C2A29] text-[#FDFBF7]/80 pt-16 pb-12 border-t border-[#E3A38F]/20 mt-20" dir="rtl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="space-y-4 md:col-span-1 text-start">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-[#C86D51] text-white flex items-center justify-center font-black text-xl shadow-md">
+                  آ
+                </div>
+                <span className="text-xl font-black text-[#FDFBF7] font-heading tracking-tight">آرک‌فلو</span>
+              </div>
+              <p className="text-xs text-[#FDFBF7]/70 leading-relaxed">
+                سامانه هوشمند طراحی داخلی، تحلیل متریال بازار و مدیریت بودجه بازسازی خانه با هوش مصنوعی.
+              </p>
+            </div>
+
+            <div className="space-y-3 text-start">
+              <h4 className="text-sm font-bold text-[#FDFBF7] font-heading">دسترسی سریع</h4>
+              <ul className="space-y-2 text-xs">
+                <li><button onClick={() => handleTabChange('home')} className="hover:text-[#C86D51] transition">صفحه اصلی</button></li>
+                <li><button onClick={() => handleTabChange('dashboard')} className="hover:text-[#C86D51] transition">داشبورد هوش مصنوعی</button></li>
+                <li><button onClick={() => handleTabChange('profiling')} className="hover:text-[#C86D51] transition">پروفایلینگ خانواده</button></li>
+                <li><button onClick={() => handleTabChange('marketplace')} className="hover:text-[#C86D51] transition">بازارچه متریال</button></li>
+              </ul>
+            </div>
+
+            <div className="space-y-3 text-start">
+              <h4 className="text-sm font-bold text-[#FDFBF7] font-heading">جامعه و خدمات</h4>
+              <ul className="space-y-2 text-xs">
+                <li><button onClick={() => handleTabChange('community')} className="hover:text-[#C86D51] transition">انجمن معماران</button></li>
+                <li><button onClick={() => handleTabChange('pricing')} className="hover:text-[#C86D51] transition">تعرفه‌ها و اشتراک</button></li>
+                <li><button onClick={() => handleTabChange('marketplace')} className="hover:text-[#C86D51] transition">قیمت لحظه‌ای مصالح</button></li>
+              </ul>
+            </div>
+
+            <div className="space-y-3 text-start">
+              <h4 className="text-sm font-bold text-[#FDFBF7] font-heading">تماس با ما</h4>
+              <p className="text-xs text-[#FDFBF7]/70 leading-relaxed">
+                تهران، خیابان ونک، برج نگار، پلاک ۴۲<br />
+                تلفن پشتیبانی: ۰۲۱-۸۸۷۷۶۶۵۵<br />
+                ایمیل: support@arcflow.ir
+              </p>
+            </div>
+          </div>
+
+          <div className="pt-8 border-t border-[#FDFBF7]/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#FDFBF7]/60">
+            <p>تمامی حقوق این سامانه متعلق به آرک‌فلو می‌باشد © ۱۴۰۳</p>
+            <div className="flex items-center gap-6">
+              <span>حریم خصوصی</span>
+              <span>قوانین و مقررات</span>
+            </div>
+          </div>
         </div>
-      )}
+      </footer>
     </div>
   );
 }
