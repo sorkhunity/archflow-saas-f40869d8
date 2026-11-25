@@ -5,12 +5,24 @@ import { mockMaterials, materialCategoryLabels } from '../data/mockData';
 
 interface MarketplacePageProps {
   onAddToCart: (item: MaterialItem) => void;
-  cartItems: MaterialItem[];
+  cartItems?: MaterialItem[];
+  onNavigate?: (tab: string) => void;
+  searchQuery?: string;
+  setSearchQuery?: (q: string) => void;
 }
 
-export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onAddToCart, cartItems }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+export const MarketplacePage: React.FC<MarketplacePageProps> = ({
+  onAddToCart,
+  cartItems = [],
+  onNavigate,
+  searchQuery = '',
+  setSearchQuery
+}) => {
+  const [localSearch, setLocalSearch] = useState('');
   const [selectedCategoryKey, setSelectedCategoryKey] = useState<string>('all');
+
+  const activeSearch = searchQuery !== undefined ? searchQuery : localSearch;
+  const handleSearchChange = setSearchQuery || setLocalSearch;
 
   const categoryKeys = ['all', 'wood', 'tile', 'lighting', 'sanitary', 'paint', 'stone'];
 
@@ -20,7 +32,8 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onAddToCart, c
   };
 
   const filteredMaterials = mockMaterials.filter(item => {
-    const matchesSearch = item.name.includes(searchQuery) || item.description.includes(searchQuery);
+    const q = activeSearch.toLowerCase();
+    const matchesSearch = !q || item.name.toLowerCase().includes(q) || item.description.toLowerCase().includes(q);
     const matchesCat = selectedCategoryKey === 'all' || item.category === selectedCategoryKey;
     return matchesSearch && matchesCat;
   });
@@ -47,8 +60,8 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onAddToCart, c
           <input
             id="material-search"
             type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={activeSearch}
+            onChange={(e) => handleSearchChange(e.target.value)}
             placeholder="جستجوی نام متریال، ویژگی یا کاربرد..."
             className="w-full ps-11 pe-4 py-3 rounded-2xl bg-[#FDFBF7] border border-[#E3A38F]/30 text-sm focus:outline-none focus:border-[#C86D51]"
           />
@@ -74,7 +87,7 @@ export const MarketplacePage: React.FC<MarketplacePageProps> = ({ onAddToCart, c
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredMaterials.map((item) => {
-          const inCart = cartItems.some(ci => ci.id === item.id);
+          const inCart = Array.isArray(cartItems) && cartItems.some(ci => ci.id === item.id);
           return (
             <div key={item.id} className="bg-white rounded-3xl overflow-hidden shadow-sm border border-[#E3A38F]/30 flex flex-col hover:shadow-md transition">
               <div className="relative h-48 overflow-hidden bg-gray-100">
