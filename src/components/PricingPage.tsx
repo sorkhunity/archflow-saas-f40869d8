@@ -58,13 +58,13 @@ export const PricingPage: React.FC<PricingPageProps> = ({ onNavigate, onSelectPe
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16" dir="rtl">
       <div className="text-center max-w-3xl mx-auto space-y-4">
-        <span className="text-xs font-bold text-[#C86D51] bg-[#C86D51]/10 px-3 py-1.5 rounded-full">
+        <span className="text-xs font-bold text-amber-700 bg-amber-500/15 px-3 py-1.5 rounded-full border border-amber-500/30">
           تعرفه‌ها و اشتراک‌ها
         </span>
-        <h1 className="text-3xl sm:text-4xl font-black text-[#2C2A29] font-heading">
+        <h1 className="text-3xl sm:text-4xl font-black text-stone-900 font-heading">
           پلن مناسب پروژه خود را انتخاب کنید
         </h1>
-        <p className="text-base text-[#6B5B52]">
+        <p className="text-base text-stone-600">
           از بازسازی یک آپارتمان کوچک تا مدیریت ده‌ها پروژه معماری، آرک‌فلو ابزار دقیق هوش مصنوعی را در اختیار شما می‌گذارد.
         </p>
       </div>
@@ -73,52 +73,51 @@ export const PricingPage: React.FC<PricingPageProps> = ({ onNavigate, onSelectPe
         {plans.map((plan, idx) => (
           <div
             key={idx}
-            className={`bg-white rounded-3xl p-8 shadow-sm border flex flex-col justify-between relative transition ${
+            className={`bg-white rounded-3xl p-8 shadow-[0_10px_35px_rgba(234,179,8,0.22)] border flex flex-col justify-between relative transition ${
               plan.popular
-                ? 'border-[#C86D51] ring-2 ring-[#C86D51]/20 shadow-xl lg:-translate-y-2'
-                : 'border-[#E3A38F]/30'
+                ? 'border-amber-500 ring-2 ring-amber-500/30 shadow-[0_15px_45px_rgba(234,179,8,0.3)] lg:-translate-y-2'
+                : 'border-amber-500/35'
             }`}
           >
             {plan.popular && (
-              <span className="absolute -top-3 start-1/2 -translate-x-1/2 bg-[#C86D51] text-white text-xs px-4 py-1 rounded-full font-bold shadow-md">
-                محبوب‌ترین انتخاب طراحان
+              <span className="absolute -top-3 start-1/2 -translate-x-1/2 bg-amber-600 text-white text-[11px] font-bold px-4 py-1 rounded-full shadow-md">
+                پیشنهاد ویژه معماران
               </span>
             )}
-            
+
             <div className="space-y-6">
-              <div className="space-y-2">
-                <h3 className="text-xl font-black text-[#2C2A29] font-heading">{plan.name}</h3>
-                <p className="text-xs text-[#6B5B52]">{plan.description}</p>
+              <div>
+                <h3 className="text-lg font-black text-stone-900 font-heading">{plan.name}</h3>
+                <p className="text-xs text-stone-500 mt-1">{plan.period}</p>
               </div>
 
-              <div className="flex items-baseline gap-2 pt-2 pb-4 border-b border-[#E3A38F]/20">
-                <span className="text-3xl sm:text-4xl font-black text-[#2C2A29] font-heading">{plan.price}</span>
-                <span className="text-xs text-[#6B5B52]">{plan.period}</span>
+              <div className="flex items-baseline gap-1">
+                <span className="text-2xl sm:text-3xl font-black text-amber-700 font-heading">{plan.price}</span>
               </div>
 
-              <ul className="space-y-3">
+              <p className="text-xs text-stone-600 leading-relaxed">{plan.description}</p>
+
+              <div className="space-y-3 pt-4 border-t border-amber-500/20">
                 {plan.features.map((feat, fIdx) => (
-                  <li key={fIdx} className="flex items-center gap-3 text-xs sm:text-sm text-[#2C2A29]">
-                    <CheckCircle2 className="w-4 h-4 text-[#C86D51] shrink-0" />
+                  <div key={fIdx} className="flex items-center gap-2.5 text-xs text-stone-700">
+                    <CheckCircle2 className="w-4 h-4 text-amber-600 shrink-0" />
                     <span>{feat}</span>
-                  </li>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
 
             <div className="pt-8">
               <button
-                onClick={() => {
-                  onSelectPersona('sara');
-                  onNavigate('dashboard');
-                }}
-                className={`w-full py-4 rounded-2xl font-bold text-sm transition shadow-sm ${
+                onClick={() => onNavigate('dashboard')}
+                className={`w-full py-3.5 rounded-2xl text-xs font-bold transition shadow-md flex items-center justify-center gap-2 cursor-pointer ${
                   plan.popular
-                    ? 'bg-[#C86D51] text-white hover:bg-[#b05b41]'
-                    : 'bg-[#E3A38F]/20 text-[#2C2A29] hover:bg-[#E3A38F]/30'
+                    ? 'bg-amber-600 hover:bg-amber-700 text-white shadow-amber-500/30'
+                    : 'bg-stone-900 hover:bg-stone-800 text-white'
                 }`}
               >
-                {plan.cta}
+                <span>{plan.cta}</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
