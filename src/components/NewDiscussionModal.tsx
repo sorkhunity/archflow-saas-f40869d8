@@ -3,12 +3,11 @@ import { X, Sparkles, Loader2 } from 'lucide-react';
 import { discussionTagLabels, discussionTagKeys, DiscussionTagKey } from '../data/communityData';
 
 interface NewDiscussionModalProps {
-  isOpen?: boolean;
   onClose: () => void;
   onSubmit: (data: { title: string; content: string; tagKeys: DiscussionTagKey[] }) => void;
 }
 
-export const NewDiscussionModal: React.FC<NewDiscussionModalProps> = ({ isOpen = true, onClose, onSubmit }) => {
+export const NewDiscussionModal: React.FC<NewDiscussionModalProps> = ({ onClose, onSubmit }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [selectedTags, setSelectedTags] = useState<DiscussionTagKey[]>(['material']);
@@ -48,8 +47,6 @@ export const NewDiscussionModal: React.FC<NewDiscussionModalProps> = ({ isOpen =
       onClose();
     }, 600);
   };
-
-  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm animate-fade-in" dir="rtl" onClick={onClose}>
