@@ -100,35 +100,24 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   <ShoppingBag className="w-8 h-8" />
                 </div>
                 <h3 className="text-lg font-bold text-stone-800">سبد خرید شما خالی است</h3>
-                <p className="text-sm text-stone-500 max-w-xs mx-auto">
-                  از بازارچه متریال یا پیشنهادهای هوش مصنوعی، مصالح مورد نظر پروژه خود را به سبد اضافه کنید.
+                <p className="text-xs text-stone-500 max-w-xs mx-auto">
+                  از بخش بازارچه یا دشبورد هوش مصنوعی، متریال‌های مورد نظر خود را به سبد خرید اضافه کنید.
                 </p>
               </div>
             ) : (
               items.map((item) => (
-                <div key={item.id} className="bg-white rounded-2xl p-4 border border-stone-200 shadow-sm flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <img src={item.image} alt={item.name} className="w-16 h-16 rounded-xl object-cover" />
-                    <div>
-                      <h4 className="font-bold text-stone-900 text-sm">{item.name}</h4>
-                      <span className="text-xs text-stone-500">{item.brand}</span>
-                      <div className="text-xs font-extrabold text-[#C86D51] mt-1">
-                        {(item.price ?? 0).toLocaleString('fa-IR')} تومان {item.unit}
-                      </div>
-                    </div>
+                <div key={item.id} className="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between gap-4">
+                  <img src={item.image} alt={item.name} className="w-16 h-16 rounded-xl object-cover shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-bold text-sm text-stone-900 truncate">{item.name}</h4>
+                    <span className="text-xs text-[#C86D51] font-semibold">
+                      {(item.price ?? 0).toLocaleString('fa-IR')} تومان / {item.unit}
+                    </span>
                   </div>
                   <button
                     onClick={() => onRemoveItem(item.id)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        onRemoveItem(item.id);
-                      }
-                    }}
-                    role="button"
-                    tabIndex={0}
-                    className="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 flex items-center justify-center transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-500"
-                    aria-label={`حذف ${item.name}`}
+                    className="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 flex items-center justify-center transition"
+                    aria-label="حذف آیتم"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -137,26 +126,27 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
             )}
           </div>
 
-          {/* Footer */}
+          {/* Footer Checkout */}
           {items.length > 0 && (
             <div className="p-6 bg-white border-t border-[#E3A38F]/30 space-y-4">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-stone-600 font-medium">مجموع برآورد خرید:</span>
-                <span className="text-xl font-black text-[#C86D51]">{(totalPrice ?? 0).toLocaleString('fa-IR')} تومان</span>
+                <span className="text-stone-600">مجموع قابل پرداخت:</span>
+                <span className="text-lg font-black text-[#2C2A29] font-heading">
+                  {(totalPrice ?? 0).toLocaleString('fa-IR')} <span className="text-xs font-normal">تومان</span>
+                </span>
               </div>
-              
               <div className="flex gap-3">
                 <button
                   onClick={onClearCart}
-                  className="px-4 py-3 rounded-xl border border-stone-300 text-stone-700 hover:bg-stone-100 text-xs font-bold transition-all cursor-pointer"
+                  className="px-4 py-3 rounded-xl border border-stone-300 text-stone-700 hover:bg-stone-50 text-xs font-bold transition"
                 >
                   خالی کردن
                 </button>
                 <button
                   onClick={onProceed}
-                  className="flex-1 py-3 bg-[#C86D51] text-white rounded-xl text-sm font-bold shadow-lg hover:bg-[#B35B40] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="flex-1 bg-[#C86D51] hover:bg-[#b05b41] text-white py-3 px-6 rounded-xl text-xs font-bold transition shadow-md flex items-center justify-center gap-2"
                 >
-                  <span>ثبت سفارش و پیش‌فاکتور</span>
+                  <span>ثبت سفارش نهایی</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>

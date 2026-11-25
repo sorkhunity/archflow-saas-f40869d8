@@ -4,7 +4,12 @@ import { communityDiscussions, discussionTagLabels, discussionTagKeys, Discussio
 import { DiscussionItem } from './DiscussionItem';
 import { NewDiscussionModal } from './NewDiscussionModal';
 
-export const CommunityPage: React.FC = () => {
+interface CommunityPageProps {
+  onNavigate: (tab: string) => void;
+  onSelectPersona: (p: any) => void;
+}
+
+export const CommunityPage: React.FC<CommunityPageProps> = ({ onNavigate }) => {
   const [selectedTag, setSelectedTag] = useState<DiscussionTagKey>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [likedMap, setLikedMap] = useState<Record<string, boolean>>({});
@@ -36,6 +41,7 @@ export const CommunityPage: React.FC = () => {
       setIsSubmittingGlobal(false);
       setSuccessToast(true);
       setTimeout(() => setSuccessToast(false), 4000);
+      setNewDiscussionModal(false);
     }, 500);
   };
 
@@ -69,106 +75,91 @@ export const CommunityPage: React.FC = () => {
               <span>جامعه تخصصی معماران و کارفرمایان آرک‌فلو</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight font-heading">
-              تبادل نظر، هم‌اندیشی و مشاوره پروژه
+              تبادل تجربه، پرسش و پاسخ تخصصی معماری
             </h1>
-            <p className="text-sm text-stone-300 leading-relaxed">
-              با هزاران معمار، طراح داخلی و مالک پروژه در ایران تبادل تجربه کنید، پرسش‌های فنی بپرسید و پاسخ‌های کارشناسی دریافت کنید.
+            <p className="text-stone-300 text-sm sm:text-base leading-relaxed">
+              با همکاران صنعت ساختمان، طراحان و مالکان تبادل نظر کنید، تجربیات بازسازی را به اشتراک بگذارید و پاسخ چالش‌های اجرایی خود را دریافت کنید.
             </p>
-            
-            <div className="pt-2 flex flex-wrap items-center gap-4">
+            <div className="pt-2">
               <button
                 onClick={() => setNewDiscussionModal(true)}
-                disabled={isSubmittingGlobal}
-                className="bg-[#C86D51] hover:bg-[#b05c42] text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-lg shadow-[#C86D51]/30 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                className="bg-[#C86D51] hover:bg-[#b05b41] text-white px-6 py-3.5 rounded-2xl text-xs sm:text-sm font-bold transition shadow-lg flex items-center gap-2 cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
-                <span>{isSubmittingGlobal ? 'در حال ثبت...' : 'ایجاد بحث جدید'}</span>
+                <span>شروع بحث جدید در انجمن</span>
               </button>
-              
-              <div className="flex items-center gap-6 text-xs text-stone-300 pe-4 border-s border-stone-700">
-                <div>
-                  <span className="font-bold text-white block text-sm">۱,۲۸۰</span>
-                  <span>عضو فعال</span>
-                </div>
-                <div>
-                  <span className="font-bold text-white block text-sm">۳,۴۵۰</span>
-                  <span>بحث و پرسش</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
 
-        {/* Filters & Search */}
-        <div className="bg-white rounded-3xl p-6 border border-stone-200 shadow-sm space-y-6">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            
-            {/* Tag Pills */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-none">
-              {discussionTagKeys.map(tagKey => {
-                const label = discussionTagLabels[tagKey];
-                const isActive = selectedTag === tagKey;
-                return (
-                  <button
-                    key={tagKey}
-                    onClick={() => setSelectedTag(tagKey)}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-                      isActive 
-                        ? 'bg-[#2C2A29] text-white shadow-md' 
-                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
+        {/* Filters and Search */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-stone-200 shadow-sm">
+          <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
+            {discussionTagKeys.map(tagKey => (
+              <button
+                key={tagKey}
+                onClick={() => setSelectedTag(tagKey)}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition shrink-0 ${
+                  selectedTag === tagKey
+                    ? 'bg-[#C86D51] text-white shadow-md'
+                    : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                }`}
+              >
+                {discussionTagLabels[tagKey] || tagKey}
+              </button>
+            ))}
+          </div>
 
-            {/* Search Input */}
-            <div className="relative min-w-[280px]">
-              <label htmlFor="community-search" className="sr-only">جستجو در بحث‌ها</label>
-              <Search className="absolute start-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-              <input
-                id="community-search"
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="جستجو در عنوان یا متن بحث‌ها..."
-                className="w-full bg-stone-50 border border-stone-200 rounded-2xl ps-10 pe-4 py-2.5 text-xs text-stone-800 placeholder:text-stone-400 focus:outline-none focus:border-[#C86D51]"
-              />
-            </div>
+          <div className="w-full md:w-72">
+            <input
+              type="text"
+              placeholder="جستجو در گفتگوها..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-stone-100 border border-stone-200 rounded-xl px-4 py-2.5 text-xs w-full focus:outline-none focus:border-[#C86D51]"
+            />
           </div>
         </div>
 
-        {/* Discussion List */}
-        <div className="space-y-4">
+        {/* Discussions List */}
+        <div className="space-y-6">
           {filteredDiscussions.length === 0 ? (
-            <div className="bg-white rounded-3xl p-12 text-center border border-stone-200 space-y-3">
-              <Users className="w-12 h-12 text-stone-300 mx-auto" />
-              <h3 className="text-base font-bold text-stone-800">موردی یافت نشد</h3>
-              <p className="text-xs text-stone-500">پاسخی مطابق با جستجوی شما در این دسته پیدا نشد.</p>
+            <div className="text-center py-20 bg-white rounded-3xl border border-stone-200 shadow-sm space-y-4">
+              <div className="w-16 h-16 rounded-2xl bg-stone-100 text-stone-400 flex items-center justify-center mx-auto">
+                <MessageCircle className="w-8 h-8" />
+              </div>
+              <h3 className="text-lg font-bold text-stone-800">گفتگویی یافت نشد</h3>
+              <p className="text-xs text-stone-500">با کلمات کلیدی دیگر جستجو کنید یا موضوع جدیدی ایجاد نمایید.</p>
             </div>
           ) : (
             filteredDiscussions.map(item => (
               <DiscussionItem
                 key={item.id}
-                item={item}
+                id={item.id}
+                author={item.author}
+                avatar={item.avatar}
+                role={item.role}
+                title={item.title}
+                content={item.content}
+                tagKeys={item.tagKeys}
+                replies={item.replies}
+                likes={item.likes}
+                time={item.time}
+                onLike={handleLike}
                 liked={!!likedMap[item.id]}
-                onLike={() => handleLike(item.id)}
               />
             ))
           )}
         </div>
 
-        {/* New Discussion Modal */}
-        {newDiscussionModal && (
-          <NewDiscussionModal
-            onClose={() => setNewDiscussionModal(false)}
-            onSubmit={handleCreateNew}
-          />
-        )}
-
       </div>
+
+      <NewDiscussionModal
+        isOpen={newDiscussionModal}
+        onClose={() => setNewDiscussionModal(false)}
+        onSubmit={handleCreateNew}
+        isSubmitting={isSubmittingGlobal}
+      />
     </div>
   );
 };

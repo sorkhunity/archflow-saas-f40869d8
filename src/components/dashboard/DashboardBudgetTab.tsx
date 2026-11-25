@@ -58,21 +58,21 @@ export const DashboardBudgetTab: React.FC<DashboardBudgetTabProps> = ({ currentP
             <div className="text-2xl font-black text-emerald-700 font-heading">
               {(remaining ?? 0).toLocaleString('fa-IR')} <span className="text-xs font-normal">تومان</span>
             </div>
-            <span className="text-[10px] text-emerald-600 font-bold">قابل استفاده برای تجهیزات نهایی</span>
+            <span className="text-[10px] text-emerald-600 font-bold">مدیریت بهینه ریسک مالی</span>
           </div>
         </div>
 
         <div className="space-y-4 pt-4">
-          <h3 className="font-bold text-sm text-[#2C2A29]">توزیع هزینه‌ها بر اساس دسته‌بندی مصالح</h3>
+          <h3 className="text-sm font-bold text-[#2C2A29]">توزیع بودجه بر اساس دسته‌بندی مصالح</h3>
           <div className="space-y-3">
             {categories.map((cat, idx) => (
-              <div key={idx} className="bg-[#F9F6F0] p-4 rounded-2xl border border-[#E3A38F]/20 space-y-2">
-                <div className="flex justify-between items-center text-xs">
-                  <span className="font-bold text-[#2C2A29]">{cat.name}</span>
-                  <span className="text-[#6B5B52]">تخصیص: {(cat.allocated ?? 0).toLocaleString('fa-IR')} تومان</span>
+              <div key={idx} className="bg-[#F9F6F0] p-4 rounded-2xl space-y-2">
+                <div className="flex items-center justify-between text-xs font-bold text-[#2C2A29]">
+                  <span>{cat.name}</span>
+                  <span>{(cat.allocated ?? 0).toLocaleString('fa-IR')} تومان</span>
                 </div>
-                <div className="w-full bg-stone-200 h-2.5 rounded-full overflow-hidden">
-                  <div className={`${cat.color} h-full rounded-full`} style={{ width: `${Math.min(100, Math.round((cat.spent / cat.allocated) * 100))}%` }} />
+                <div className="w-full bg-stone-200 h-2 rounded-full overflow-hidden">
+                  <div className={`h-full ${cat.color}`} style={{ width: `${Math.round((cat.spent / cat.allocated) * 100)}%` }} />
                 </div>
               </div>
             ))}
