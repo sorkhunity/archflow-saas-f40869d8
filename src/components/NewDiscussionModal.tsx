@@ -3,12 +3,11 @@ import { X, Sparkles, Loader2 } from 'lucide-react';
 import { discussionTagLabels, discussionTagKeys, DiscussionTagKey } from '../data/communityData';
 
 interface NewDiscussionModalProps {
-  isOpen?: boolean;
   onClose: () => void;
   onSubmit: (data: { title: string; content: string; tagKeys: DiscussionTagKey[] }) => void;
 }
 
-export const NewDiscussionModal: React.FC<NewDiscussionModalProps> = ({ isOpen = true, onClose, onSubmit }) => {
+export const NewDiscussionModal: React.FC<NewDiscussionModalProps> = ({ onClose, onSubmit }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [selectedTags, setSelectedTags] = useState<DiscussionTagKey[]>(['material']);
@@ -49,8 +48,6 @@ export const NewDiscussionModal: React.FC<NewDiscussionModalProps> = ({ isOpen =
     }, 600);
   };
 
-  if (!isOpen) return null;
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm animate-fade-in" dir="rtl" onClick={onClose}>
       <div 
@@ -71,11 +68,16 @@ export const NewDiscussionModal: React.FC<NewDiscussionModalProps> = ({ isOpen =
             </div>
           </div>
           <button
-            onClick={onClose}
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onClose();
+            }}
             aria-label="بستن پنجره"
-            className="w-9 h-9 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-500 flex items-center justify-center transition-all cursor-pointer"
+            className="w-9 h-9 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-500 flex items-center justify-center transition-all cursor-pointer relative z-20"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5 pointer-events-none" />
           </button>
         </div>
 
@@ -133,7 +135,11 @@ export const NewDiscussionModal: React.FC<NewDiscussionModalProps> = ({ isOpen =
           <div className="pt-4 flex items-center justify-end gap-3 border-t border-stone-100">
             <button
               type="button"
-              onClick={onClose}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onClose();
+              }}
               className="px-5 py-2.5 rounded-xl bg-stone-100 text-stone-700 font-bold text-xs hover:bg-stone-200 transition-all cursor-pointer"
             >
               انصراف
