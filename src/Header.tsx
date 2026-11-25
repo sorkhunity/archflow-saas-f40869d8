@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ShoppingBag, Search, Menu, X, User, Sparkles, Compass, ShieldCheck, ArrowRight, ChevronDown } from 'lucide-react';
 import { Persona } from './types';
+import userImage1 from './assets/user-image-mww6zcgq-1';
 
 interface HeaderProps {
   activeTab: string;
@@ -55,7 +56,7 @@ export const Header: React.FC<HeaderProps> = ({
             className="flex items-center gap-3 text-start group focus:outline-none shrink-0"
           >
             <div className="w-11 h-11 rounded-2xl bg-stone-900 overflow-hidden flex items-center justify-center shadow-md group-hover:scale-105 transition">
-              <img src="/__l5e/assets-v1/d020c4ee-6d67-45a9-9b78-5888ba632b03/prototype-gaming.jpg" alt="آرک فلو" className="w-full h-full object-cover" onError={(e)=>{ (e.target as HTMLElement).style.display = 'none'; }} />
+              <img src={userImage1} alt="لوگو" className="w-full h-full object-cover" />
             </div>
             <div>
               <span className="text-xl sm:text-2xl font-black text-[#2D2826] tracking-tight block font-heading">آرک فلو</span>
