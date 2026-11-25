@@ -104,11 +104,10 @@ export const CommunityPage: React.FC<CommunityPageProps> = ({ onNavigate, onSele
       };
       setDiscussions([newDisc, ...discussions]);
       setIsSubmitting(false);
+      setNewDiscussionOpen(false);
       setTitle('');
       setContent('');
-      setSelectedTagKey('material');
-      setNewDiscussionOpen(false);
-      setSuccessMessage('بحث جدید با موفقیت ثبت شد و در انجمن منتشر گردید.');
+      setSuccessMessage('بحث جدید با موفقیت منتشر شد.');
       setTimeout(() => setSuccessMessage(null), 4000);
     }, 400);
   };
@@ -118,199 +117,203 @@ export const CommunityPage: React.FC<CommunityPageProps> = ({ onNavigate, onSele
     : discussions.filter(d => d.tagKeys.includes(activeFilterTagKey));
 
   return (
-    <div className="min-h-dvh bg-[#F9F6F0] py-10 px-4 sm:px-6 lg:px-8 space-y-10" dir="rtl">
-      {/* Top Banner / Header */}
-      <div className="max-w-7xl mx-auto bg-gradient-to-l from-[#C86D51] to-[#D9836B] rounded-3xl p-8 text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="absolute inset-0 bg-black/10 pointer-events-none" />
-        <div className="relative z-10 space-y-3 max-w-2xl">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-xs font-medium text-white backdrop-blur-md">
-            <Sparkles className="w-3.5 h-3.5" /> جامعه حرفه‌ای معماری و بازسازی
-          </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">انجمن هم‌اندیشی و تبادل تجربه</h1>
-          <p className="text-white/90 text-sm sm:text-base leading-relaxed">
-            با هزاران معمار، طراح داخلی و مالکان خانه‌های در حال بازسازی تبادل نظر کنید، تجربیات خرید متریال را بخوانید و پرسش‌های تخصصی بپرسید.
-          </p>
-        </div>
-        <div className="relative z-10 flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+    <div className="min-h-dvh bg-stone-50 pb-16 pt-8 font-sans" dir="rtl">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {successMessage && (
+          <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl flex items-center gap-3 shadow-sm animate-fade-in" role="status" aria-live="polite">
+            <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+            <span className="font-medium text-sm">{successMessage}</span>
+          </div>
+        )}
+
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 bg-white p-6 rounded-2xl shadow-xs border border-stone-200">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-semibold mb-2">
+              <Sparkles className="w-3.5 h-3.5" />
+              جامعه حرفه‌ای طراحان و مجریان
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">انجمن تبادل نظر و تجربیات</h1>
+            <p className="text-sm text-stone-600 mt-1">سوالات فنی بپرسید، نمونه کارهای خود را به اشتراک بگذارید و از تجربیات همکاران صنف استفاده کنید.</p>
+          </div>
           <button
             onClick={() => setNewDiscussionOpen(true)}
-            className="px-6 py-3.5 bg-white text-[#C86D51] font-bold rounded-xl shadow-lg hover:bg-[#FDFBF7] transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-medium text-sm transition-all shadow-sm cursor-pointer active:scale-95"
           >
-            <PlusCircle className="w-5 h-5" /> ایجاد موضوع جدید
+            <PlusCircle className="w-5 h-5" />
+            ارسال بحث جدید
           </button>
         </div>
-      </div>
 
-      {successMessage && (
-        <div className="max-w-7xl mx-auto bg-emerald-50 border border-emerald-200 text-emerald-800 px-6 py-4 rounded-2xl shadow-sm flex items-center gap-3 animate-fade-in" role="status">
-          <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-          <span className="text-sm font-medium">{successMessage}</span>
+        {/* Filter Tags */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6 no-scrollbar">
+          <button
+            onClick={() => setActiveFilterTagKey('all')}
+            className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              activeFilterTagKey === 'all'
+                ? 'bg-stone-900 text-white shadow-xs'
+                : 'bg-white text-stone-600 border border-stone-200 hover:bg-stone-100'
+            }`}
+          >
+            همه موضوعات ({discussions.length})
+          </button>
+          {discussionTagKeys.map(tagKey => {
+            const count = discussions.filter(d => d.tagKeys.includes(tagKey)).length;
+            return (
+              <button
+                key={tagKey}
+                onClick={() => setActiveFilterTagKey(tagKey)}
+                className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
+                  activeFilterTagKey === tagKey
+                    ? 'bg-amber-600 text-white shadow-xs'
+                    : 'bg-white text-stone-600 border border-stone-200 hover:bg-stone-100'
+                }`}
+              >
+                <span>{discussionTagLabels[tagKey] || tagKey}</span>
+                {count > 0 && <span className="opacity-80 text-[10px]">({count})</span>}
+              </button>
+            );
+          })}
         </div>
-      )}
 
-      {/* Filter Tags */}
-      <div className="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-        <button
-          onClick={() => setActiveFilterTagKey('all')}
-          className={`px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${
-            activeFilterTagKey === 'all'
-              ? 'bg-[#C86D51] text-white shadow-md'
-              : 'bg-white text-stone-700 hover:bg-stone-100 border border-stone-200'
-          }`}
-        >
-          همه موضوعات ({discussions.length})
-        </button>
-        {discussionTagKeys.map(tagKey => {
-          const label = discussionTagLabels[tagKey] || tagKey;
-          const count = discussions.filter(d => d.tagKeys.includes(tagKey)).length;
-          return (
-            <button
-              key={tagKey}
-              onClick={() => setActiveFilterTagKey(tagKey)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${
-                activeFilterTagKey === tagKey
-                  ? 'bg-[#C86D51] text-white shadow-md'
-                  : 'bg-white text-stone-700 hover:bg-stone-100 border border-stone-200'
-              }`}
-            >
-              {label} {count > 0 && `(${count})`}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Discussions Feed */}
-      <div className="max-w-7xl mx-auto space-y-6">
-        {filteredDiscussions.length === 0 ? (
-          <div className="bg-white rounded-3xl p-12 text-center border border-stone-200 shadow-sm space-y-4">
-            <div className="w-16 h-16 bg-[#C86D51]/10 text-[#C86D51] rounded-2xl flex items-center justify-center mx-auto">
-              <MessageSquare className="w-8 h-8" />
+        {/* Discussions List */}
+        <div className="space-y-4">
+          {filteredDiscussions.length === 0 ? (
+            <div className="bg-white rounded-2xl p-12 text-center border border-stone-200 shadow-xs">
+              <MessageSquare className="w-12 h-12 text-stone-300 mx-auto mb-3" />
+              <h3 className="text-base font-bold text-stone-800">موضوعی با این تگ یافت نشد</h3>
+              <p className="text-xs text-stone-500 mt-1">اولین نف باشید که در این دسته بندی بحث ایجاد می‌کند.</p>
+              <button
+                onClick={() => { setSelectedTagKey(activeFilterTagKey === 'all' ? 'material' : activeFilterTagKey); setNewDiscussionOpen(true); }}
+                className="mt-4 px-4 py-2 bg-amber-600 text-white text-xs font-medium rounded-xl hover:bg-amber-700 transition-colors inline-block"
+              >
+                ایجاد بحث جدید در این موضوع
+              </button>
             </div>
-            <h3 className="text-xl font-bold text-stone-900">موضوعی با این برچسب یافت نشد</h3>
-            <p className="text-stone-500 text-sm max-w-md mx-auto">
-              می‌توانید اولین نفری باشید که در این دسته موضوع جدیدی مطرح می‌کنید و از همکاران نظر می‌خواهید.
-            </p>
-            <button
-              onClick={() => setNewDiscussionOpen(true)}
-              className="px-6 py-2.5 bg-[#C86D51] text-white font-medium rounded-xl hover:bg-[#B35B40] transition-all cursor-pointer"
-            >
-              ایجاد پرسش یا بحث جدید
-            </button>
-          </div>
-        ) : (
-          filteredDiscussions.map(disc => (
-            <div key={disc.id} className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-stone-200 hover:shadow-md transition-all space-y-5">
-              <div className="flex items-center justify-between gap-4 flex-wrap">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-[#C86D51]/15 text-[#C86D51] font-bold text-lg flex items-center justify-center shadow-inner">
-                    {disc.avatar}
+          ) : (
+            filteredDiscussions.map(disc => (
+              <div key={disc.id} className="bg-white rounded-2xl p-6 border border-stone-200 shadow-xs hover:border-amber-300 transition-all">
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-800 font-bold flex items-center justify-center text-sm shadow-xs">
+                      {disc.avatar}
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-stone-900">{disc.author}</h4>
+                      <p className="text-xs text-stone-500">{disc.role} • {disc.time}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-bold text-stone-900 text-base">{disc.author}</h4>
-                    <span className="text-xs text-[#C86D51] font-medium">{disc.role}</span>
+                  <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                    {disc.tagKeys.map(tKey => (
+                      <span key={tKey} className="px-2.5 py-1 rounded-lg bg-stone-100 text-stone-700 text-[11px] font-medium">
+                        {discussionTagLabels[tKey] || tKey}
+                      </span>
+                    ))}
                   </div>
                 </div>
-                <span className="text-xs text-stone-400 font-medium">{disc.time}</span>
-              </div>
 
-              <div className="space-y-2">
-                <h3 className="text-lg sm:text-xl font-bold text-stone-900 hover:text-[#C86D51] transition-colors cursor-pointer">
+                <h3 className="text-base font-bold text-stone-900 mb-2 hover:text-amber-600 transition-colors cursor-pointer">
                   {disc.title}
                 </h3>
-                <p className="text-stone-600 text-sm sm:text-base leading-relaxed">
+                <p className="text-sm text-stone-600 mb-4 leading-relaxed line-clamp-2">
                   {disc.content}
                 </p>
-              </div>
 
-              <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-stone-100">
-                <div className="flex items-center gap-2 flex-wrap">
-                  {disc.tagKeys.map(tk => (
-                    <span key={tk} className="px-3 py-1 bg-stone-100 text-stone-600 rounded-lg text-xs font-medium">
-                      #{discussionTagLabels[tk] || tk}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="flex items-center gap-4">
+                <div className="flex items-center justify-between pt-4 border-t border-stone-100 text-xs text-stone-500">
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => handleLike(disc.id)}
+                      className="flex items-center gap-1.5 hover:text-amber-600 transition-colors cursor-pointer group p-1"
+                    >
+                      <ThumbsUp className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                      <span>{disc.likes} پسند</span>
+                    </button>
+                    <div className="flex items-center gap-1.5">
+                      <MessageCircle className="w-4 h-4 text-stone-400" />
+                      <span>{disc.replies} پاسخ</span>
+                    </div>
+                  </div>
                   <button
-                    onClick={() => handleLike(disc.id)}
-                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-stone-50 hover:bg-stone-100 text-stone-700 text-xs font-medium transition-all cursor-pointer border border-stone-200"
+                    onClick={() => {
+                      onNavigate('community-detail');
+                    }}
+                    className="text-amber-600 hover:text-amber-700 font-semibold cursor-pointer"
                   >
-                    <ThumbsUp className="w-4 h-4 text-[#C86D51]" />
-                    <span>{disc.likes} پسند</span>
+                    مشاهده جزئیات و گفتگو ←
                   </button>
-                  <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-stone-50 text-stone-700 text-xs font-medium border border-stone-200">
-                    <MessageCircle className="w-4 h-4 text-stone-500" />
-                    <span>{disc.replies} پاسخ</span>
-                  </div>
                 </div>
               </div>
-            </div>
-          ))
-        )}
-      </div>
+            ))
+          )}
+        </div>
 
-      {/* New Discussion Modal */}
-      {newDiscussionOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label="ایجاد موضوع جدید در انجمن">
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onClick={() => setNewDiscussionOpen(false)} />
-          <div className="min-h-dvh px-4 text-center flex items-center justify-center relative">
-            <div ref={modalRef} className="inline-block w-full max-w-2xl bg-white rounded-3xl p-8 text-right shadow-2xl transform transition-all my-8 relative space-y-6">
-              <div className="flex items-center justify-between pb-4 border-b border-stone-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#C86D51]/10 text-[#C86D51] flex items-center justify-center">
-                    <MessageSquare className="w-5 h-5" />
-                  </div>
-                  <h3 className="text-xl font-bold text-stone-900">ایجاد موضوع جدید در انجمن</h3>
+        {/* Modal for New Discussion */}
+        {newDiscussionOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs animate-fade-in" role="dialog" aria-modal="true" aria-label="ارسال بحث جدید">
+            <div 
+              ref={modalRef}
+              className="bg-white rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden border border-stone-200 animate-scale-up"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between p-5 border-b border-stone-100 bg-stone-50">
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="w-5 h-5 text-amber-600" />
+                  <h3 className="text-base font-bold text-stone-900">ایجاد موضوع جدید در انجمن</h3>
                 </div>
                 <button
                   onClick={() => setNewDiscussionOpen(false)}
-                  className="w-9 h-9 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition-all cursor-pointer"
+                  className="p-1.5 text-stone-400 hover:text-stone-700 rounded-lg transition-colors cursor-pointer"
                   aria-label="بستن"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <form onSubmit={handleSubmitDiscussion} className="space-y-5">
-                <div className="space-y-2">
-                  <label htmlFor="discTitle" className="block text-sm font-bold text-stone-800">عنوان موضوع</label>
+              <form onSubmit={handleSubmitDiscussion} className="p-6 space-y-4">
+                <div>
+                  <label htmlFor="discussion-title" className="block text-xs font-semibold text-stone-700 mb-1.5">
+                    عنوان سوال یا موضوع <span className="text-rose-500">*</span>
+                  </label>
                   <input
                     ref={firstInputRef}
-                    id="discTitle"
+                    id="discussion-title"
                     type="text"
                     required
                     value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="مثلا: بهترین روش عایق‌کاری صوتی دیوارهای مشترک آپارتمان..."
-                    className="w-full px-4 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-[#C86D51] text-sm text-stone-900 bg-stone-50"
+                    onChange={e => setTitle(e.target.value)}
+                    placeholder="مثلا: بهترین متریال ضد آب برای کابینت روشویی کدام است؟"
+                    className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-600"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <label htmlFor="discTag" className="block text-sm font-bold text-stone-800">دسته‌بندی موضوع</label>
+                <div>
+                  <label htmlFor="discussion-tag" className="block text-xs font-semibold text-stone-700 mb-1.5">
+                    موضوع اصلی
+                  </label>
                   <select
-                    id="discTag"
+                    id="discussion-tag"
                     value={selectedTagKey}
-                    onChange={(e) => setSelectedTagKey(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-[#C86D51] text-sm text-stone-900 bg-stone-50 cursor-pointer"
+                    onChange={e => setSelectedTagKey(e.target.value)}
+                    className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-600 bg-white"
                   >
                     {discussionTagKeys.map(tk => (
-                      <option key={tk} value={tk}>{discussionTagLabels[tk] || tk}</option>
+                      <option key={tk} value={tk}>{discussionTagLabels[tk]}</option>
                     ))}
                   </select>
                 </div>
 
-                <div className="space-y-2">
-                  <label htmlFor="discContent" className="block text-sm font-bold text-stone-800">متن پرسش یا تجربه</label>
+                <div>
+                  <label htmlFor="discussion-content" className="block text-xs font-semibold text-stone-700 mb-1.5">
+                    متن مشروح <span className="text-rose-500">*</span>
+                  </label>
                   <textarea
-                    id="discContent"
-                    rows={5}
+                    id="discussion-content"
                     required
+                    rows={5}
                     value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    placeholder="جزئیات پروژه، سوالات دقیق و انتظارات خود را بنویسید..."
-                    className="w-full px-4 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-[#C86D51] text-sm text-stone-900 bg-stone-50 resize-none"
+                    onChange={e => setContent(e.target.value)}
+                    placeholder="جزئیات پروژه، ابهامات یا تجربه خود را به طور کامل بنویسید..."
+                    className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-600 resize-none"
                   />
                 </div>
 
@@ -318,23 +321,24 @@ export const CommunityPage: React.FC<CommunityPageProps> = ({ onNavigate, onSele
                   <button
                     type="button"
                     onClick={() => setNewDiscussionOpen(false)}
-                    className="px-5 py-2.5 rounded-xl border border-stone-300 text-stone-700 hover:bg-stone-100 text-sm font-medium transition-all cursor-pointer"
+                    className="px-5 py-2.5 rounded-xl text-stone-600 hover:bg-stone-100 text-sm font-medium transition-colors cursor-pointer"
                   >
                     انصراف
                   </button>
                   <button
                     type="submit"
-                    disabled={isSubmitting}
-                    className="px-6 py-2.5 bg-[#C86D51] text-white rounded-xl text-sm font-bold hover:bg-[#B35B40] transition-all shadow-md cursor-pointer disabled:opacity-60 flex items-center gap-2"
+                    disabled={isSubmitting || !title.trim() || !content.trim()}
+                    className="px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium transition-all shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
                   >
-                    {isSubmitting ? 'در حال انتشار...' : 'انتشار موضوع'}
+                    {isSubmitting ? 'در حال ارسال...' : 'انتشار موضوع'}
                   </button>
                 </div>
               </form>
             </div>
           </div>
-        </div>
-      )}
+        )}
+
+      </div>
     </div>
   );
 };
