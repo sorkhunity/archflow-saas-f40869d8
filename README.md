@@ -1,2 +1,8 @@
-# archflow-saas-f40869d8
-ArchFlow SaaS — built with Sorkh.app
+# ArchFlow SaaS
+
+Built with Sorkh.app Make.
+
+```
+npm install
+npm run dev
+```
