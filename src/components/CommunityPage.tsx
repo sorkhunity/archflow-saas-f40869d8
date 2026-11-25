@@ -101,70 +101,70 @@ export const CommunityPage: React.FC = () => {
                 <span>۱,۴۲۰ معمار فعال</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <MessageCircle className="w-4 h-4 text-amber-600" +
-              <span>{discussions.length} بحث جاری</span>
+                <MessageCircle className="w-4 h-4 text-amber-600" />
+                <span>{discussions.length} بحث جاری</span>
+              </div>
             </div>
+          </div>
+
+          {/* Tag Filters */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+            <Filter className="w-4 h-4 text-stone-400 flex-shrink-0 ms-1 me-2" />
+            {discussionTagKeys.map(tagKey => {
+              const isSelected = selectedTag === tagKey;
+              return (
+                <button
+                  key={tagKey}
+                  onClick={() => setSelectedTag(tagKey)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex-shrink-0 cursor-pointer ${
+                    isSelected
+                      ? 'bg-amber-600 text-white shadow-sm'
+                      : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                  }`}
+                >
+                  {discussionTagLabels[tagKey]}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Tag Filters */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-          <Filter className="w-4 h-4 text-stone-400 flex-shrink-0 ms-1 me-2" />
-          {discussionTagKeys.map(tagKey => {
-            const isSelected = selectedTag === tagKey;
-            return (
+        {/* Discussion List */}
+        <div className="space-y-4">
+          {filteredDiscussions.length === 0 ? (
+            <div className="text-center py-16 bg-white rounded-3xl border border-stone-200 p-8 space-y-4">
+              <div className="w-16 h-16 rounded-3xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto">
+                <MessageCircle className="w-8 h-8" />
+              </div>
+              <h3 className="text-lg font-bold text-stone-800">هیچ بحثی با این مشخصات یافت نشد</h3>
+              <p className="text-xs text-stone-500 max-w-md mx-auto">می‌توانید کلمات کلیدی دیگری را جستجو کنید یا اولین نفر باشید که این موضوع را مطرح می‌کند.</p>
               <button
-                key={tagKey}
-                onClick={() => setSelectedTag(tagKey)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex-shrink-0 cursor-pointer ${
-                  isSelected
-                    ? 'bg-amber-600 text-white shadow-sm'
-                    : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
-                }`}
+                onClick={() => { setSearchQuery(''); setSelectedTag('all'); }}
+                className="px-5 py-2.5 rounded-xl bg-stone-100 text-stone-700 font-bold text-xs hover:bg-stone-200 transition-all cursor-pointer"
               >
-                {discussionTagLabels[tagKey]}
+                پاک کردن فیلترها
               </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Discussion List */}
-      <div className="space-y-4">
-        {filteredDiscussions.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-3xl border border-stone-200 p-8 space-y-4">
-            <div className="w-16 h-16 rounded-3xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto">
-              <MessageCircle className="w-8 h-8" />
             </div>
-            <h3 className="text-lg font-bold text-stone-800">هیچ بحثی با این مشخصات یافت نشد</h3>
-            <p className="text-xs text-stone-500 max-w-md mx-auto">می‌توانید کلمات کلیدی دیگری را جستجو کنید یا اولین نفر باشید که این موضوع را مطرح می‌کند.</p>
-            <button
-              onClick={() => { setSearchQuery(''); setSelectedTag('all'); }}
-              className="px-5 py-2.5 rounded-xl bg-stone-100 text-stone-700 font-bold text-xs hover:bg-stone-200 transition-all cursor-pointer"
-            >
-              پاک کردن فیلترها
-            </button>
-          </div>
-        ) : (
-          filteredDiscussions.map(item => (
-            <DiscussionItem
-              key={item.id}
-              item={item}
-              isLiked={!!likedMap[item.id]}
-              onLike={() => handleLike(item.id)}
-            />
-          ))
+          ) : (
+            filteredDiscussions.map(item => (
+              <DiscussionItem
+                key={item.id}
+                item={item}
+                isLiked={!!likedMap[item.id]}
+                onLike={() => handleLike(item.id)}
+              />
+            ))
+          )}
+        </div>
+
+        {/* New Discussion Modal */}
+        {newDiscussionModal && (
+          <NewDiscussionModal
+            onClose={() => setNewDiscussionModal(false)}
+            onSubmit={handleCreateNew}
+          />
         )}
       </div>
-
-      {/* New Discussion Modal */}
-      {newDiscussionModal && (
-        <NewDiscussionModal
-          onClose={() => setNewDiscussionModal(false)}
-          onSubmit={handleCreateNew}
-        />
-      )}
     </div>
-  </div>
-);
+  );
 };
