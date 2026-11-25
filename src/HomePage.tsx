@@ -33,7 +33,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onSelectPersona 
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-20" dir="rtl">
       
       {/* 1. Hero Section with Golden Glow & Glassmorphism */}
-      <div className="relative rounded-[3rem] overflow-hidden bg-gradient-to-br from-[#2D2826]/95 via-[#3A3330]/90 to-[#201E1D]/95 text-white p-8 sm:p-16 shadow-[0_15px_45px_rgba(234,179,8,0.25)] border border-amber-500/40 backdrop-blur-3xl">
+      <div className="relative rounded-[3rem] overflow-hidden bg-gradient-to-br from-[#2D2826]/95 via-[#3A3330]/90 to-[#201E1D]/95 text-white p-8 sm:p-16 shadow-[0_8px_25px_rgba(234,179,8,0.15)] border border-amber-500/40 backdrop-blur-3xl">
         <div className="absolute inset-0 opacity-30 mix-blend-overlay pointer-events-none">
           <img
             src="/__l5e/assets-v1/37676bb5-fabf-42e6-97a0-a98cdbd1de16/prototype-workplace.jpg"
