@@ -78,7 +78,7 @@ export default function App() {
 
   const handleRemoveCartItem = (id: string) => {
     setCartItems(cartItems.filter(item => item.id !== id));
-    showToast('متریال از سبد خرید حذف شد.');
+    showToast('آیتم از سبد خرید حذف شد.');
   };
 
   const handleClearCart = () => {
@@ -88,24 +88,36 @@ export default function App() {
 
   const handleProceedCheckout = () => {
     setCartOpen(false);
-    showToast('پیش‌فاکتور و لیست متریال با موفقیت ثبت شد. همکاران ما با شما تماس خواهند گرفت.');
-    setCartItems([]);
+    showToast('ثبت سفارش نهایی با موفقیت انجام شد! کارشناس لجستیک با شما تماس می‌گیرد.');
   };
 
-  const currentProject = mockProjects[0];
+  // Mock active project for dashboard
+  const currentProject: Project = {
+    id: 'proj-1',
+    title: 'بازسازی و طراحی داخلی آپارتمان مسکونی زعفرانیه',
+    persona: selectedPersona,
+    budget: 850000000,
+    budgetIRR: 850000000,
+    spent: 578000000,
+    stage: 'ai_design',
+    selectedMaterials: mockMaterials.slice(0, 3),
+    styleKey: 'modern_minimal',
+    rooms: [
+      { id: 'r1', name: 'نشیمن اصلی', area: 42, style: 'مدرن و مینیمال گرم', image: '/__l5e/assets-v1/37676bb5-fabf-42e6-97a0-a98cdbd1de16/prototype-workplace.jpg' },
+      { id: 'r2', name: 'آشپزخانه جزیره', area: 22, style: 'ژاپنی-اسکاندیناوی', image: '/__l5e/assets-v1/223c68d9-64db-4c3c-a572-34b853d2ec54/prototype-commerce.jpg' },
+      { id: 'r3', name: 'اتاق خواب مستر', area: 28, style: 'کلاسیک گرم', image: '/__l5e/assets-v1/68ceadfc-b580-4f18-8679-0088dddd218c/prototype-travel.jpg' }
+    ]
+  };
 
   return (
-    <div className="min-h-dvh bg-[#FDFBF7] text-[#2C2A29] font-sans selection:bg-[#C86D51]/20 selection:text-[#C86D51] flex flex-col" dir="rtl">
+    <div className="min-h-dvh bg-gradient-to-br from-[#1a1817] via-[#242120] to-[#2e2a28] text-stone-100 flex flex-col font-sans selection:bg-[#C86D51] selection:text-white relative overflow-x-hidden">
       
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed bottom-6 start-6 z-50 bg-[#2C2A29] text-[#FDFBF7] px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce border border-[#E3A38F]/30" role="status">
-          <CheckCircle2 className="w-5 h-5 text-[#C86D51] shrink-0" />
-          <span className="text-sm font-bold">{toastMessage}</span>
-        </div>
-      )}
+      {/* Background ambient glowing glass orbs */}
+      <div className="absolute top-20 start-10 w-96 h-96 bg-[#C86D51]/15 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/2 end-10 w-[30rem] h-[30rem] bg-[#E3A38F]/10 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute bottom-10 start-1/3 w-80 h-80 bg-amber-500/10 rounded-full blur-[140px] pointer-events-none" />
 
-      {/* Navigation Header */}
+      {/* Header */}
       <Header
         activeTab={activeTab}
         setActiveTab={handleTabChange}
@@ -116,13 +128,9 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1">
+      <main className="flex-grow relative z-10">
         {activeTab === 'home' && (
-          <HomePage
-            onNavigate={handleTabChange}
-            onSelectPersona={setSelectedPersona}
-            selectedPersona={selectedPersona}
-          />
+          <HomePage onNavigate={handleTabChange} onSelectPersona={setSelectedPersona} />
         )}
         {activeTab === 'dashboard' && (
           <DashboardPage
@@ -145,22 +153,17 @@ export default function App() {
         {activeTab === 'marketplace' && (
           <MarketplacePage
             onAddToCart={handleAddToCart}
+            cartItems={cartItems}
             onNavigate={handleTabChange}
-            searchQuery={debouncedSearch}
+            searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
           />
         )}
         {activeTab === 'community' && (
-          <CommunityPage
-            onNavigate={handleTabChange}
-            onSelectPersona={setSelectedPersona}
-          />
+          <CommunityPage onNavigate={handleTabChange} onSelectPersona={setSelectedPersona} />
         )}
         {activeTab === 'pricing' && (
-          <PricingPage
-            onNavigate={handleTabChange}
-            onSelectPersona={setSelectedPersona}
-          />
+          <PricingPage onNavigate={handleTabChange} onSelectPersona={setSelectedPersona} />
         )}
       </main>
 
@@ -174,57 +177,76 @@ export default function App() {
         onProceed={handleProceedCheckout}
       />
 
-      {/* Footer */}
-      <footer className="bg-[#2C2A29] text-[#FDFBF7]/80 pt-16 pb-12 border-t border-[#E3A38F]/20 mt-20" dir="rtl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="space-y-4 md:col-span-1 text-start">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#C86D51] text-white flex items-center justify-center font-black text-xl shadow-md">
-                  آ
-                </div>
-                <span className="text-xl font-black text-[#FDFBF7] font-heading tracking-tight">آرک‌فلو</span>
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 start-6 z-50 bg-stone-900/90 backdrop-blur-xl border border-white/20 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-in fade-in slide-in-from-bottom-5 duration-300">
+          <div className="w-8 h-8 rounded-full bg-[#C86D51]/30 text-[#C86D51] flex items-center justify-center shrink-0">
+            <Sparkles className="w-4 h-4" />
+          </div>
+          <span className="text-xs sm:text-sm font-medium">{toastMessage}</span>
+        </div>
+      )}
+
+      {/* Glassmorphic Footer */}
+      <footer className="relative z-10 border-t border-white/10 bg-black/40 backdrop-blur-2xl text-stone-400 py-12 px-4 sm:px-6 lg:px-8 mt-20" dir="rtl">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="space-y-4 md:col-span-1">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-[#C86D51] flex items-center justify-center text-white font-black">
+                <Sparkles className="w-5 h-5" />
               </div>
-              <p className="text-xs text-[#FDFBF7]/70 leading-relaxed">
-                سامانه هوشمند طراحی داخلی، تحلیل متریال بازار و مدیریت بودجه بازسازی خانه با هوش مصنوعی.
-              </p>
+              <span className="text-xl font-bold text-white font-heading">آرک‌فلو گلس</span>
             </div>
-
-            <div className="space-y-3 text-start">
-              <h4 className="text-sm font-bold text-[#FDFBF7] font-heading">دسترسی سریع</h4>
-              <ul className="space-y-2 text-xs">
-                <li><button onClick={() => handleTabChange('home')} className="hover:text-[#C86D51] transition">صفحه اصلی</button></li>
-                <li><button onClick={() => handleTabChange('dashboard')} className="hover:text-[#C86D51] transition">داشبورد هوش مصنوعی</button></li>
-                <li><button onClick={() => handleTabChange('profiling')} className="hover:text-[#C86D51] transition">پروفایلینگ خانواده</button></li>
-                <li><button onClick={() => handleTabChange('marketplace')} className="hover:text-[#C86D51] transition">بازارچه متریال</button></li>
-              </ul>
-            </div>
-
-            <div className="space-y-3 text-start">
-              <h4 className="text-sm font-bold text-[#FDFBF7] font-heading">جامعه و خدمات</h4>
-              <ul className="space-y-2 text-xs">
-                <li><button onClick={() => handleTabChange('community')} className="hover:text-[#C86D51] transition">انجمن معماران</button></li>
-                <li><button onClick={() => handleTabChange('pricing')} className="hover:text-[#C86D51] transition">تعرفه‌ها و اشتراک</button></li>
-                <li><button onClick={() => handleTabChange('marketplace')} className="hover:text-[#C86D51] transition">قیمت لحظه‌ای مصالح</button></li>
-              </ul>
-            </div>
-
-            <div className="space-y-3 text-start">
-              <h4 className="text-sm font-bold text-[#FDFBF7] font-heading">تماس با ما</h4>
-              <p className="text-xs text-[#FDFBF7]/70 leading-relaxed">
-                تهران، خیابان ونک، برج نگار، پلاک ۴۲<br />
-                تلفن پشتیبانی: ۰۲۱-۸۸۷۷۶۶۵۵<br />
-                ایمیل: support@arcflow.ir
-              </p>
-            </div>
+            <p className="text-xs text-stone-400 leading-relaxed">
+              پلتفرم جامع هوش مصنوعی و طراحی داخلی با جلوه‌های بصری شیشه‌ای پیشرفته و قیمت‌های لحظه‌ای متریال در بازار ایران.
+            </p>
           </div>
 
-          <div className="pt-8 border-t border-[#FDFBF7]/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#FDFBF7]/60">
-            <p>تمامی حقوق این سامانه متعلق به آرک‌فلو می‌باشد © ۱۴۰۳</p>
-            <div className="flex items-center gap-6">
-              <span>حریم خصوصی</span>
-              <span>قوانین و مقررات</span>
+          <div className="space-y-3">
+            <h4 className="text-sm font-bold text-white">دسترسی سریع</h4>
+            <ul className="space-y-2 text-xs">
+              <li><button onClick={() => handleTabChange('home')} className="hover:text-white transition">صفحه اصلی</button></li>
+              <li><button onClick={() => handleTabChange('profiling')} className="hover:text-white transition">پروفایلینگ خانواده</button></li>
+              <li><button onClick={() => handleTabChange('dashboard')} className="hover:text-white transition">داشبورد هوش مصنوعی</button></li>
+              <li><button onClick={() => handleTabChange('marketplace')} className="hover:text-white transition">بازارچه متریال</button></li>
+            </ul>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="text-sm font-bold text-white">جامعه و پشتیبانی</h4>
+            <ul className="space-y-2 text-xs">
+              <li><button onClick={() => handleTabChange('community')} className="hover:text-white transition">انجمن معماران</button></li>
+              <li><button onClick={() => handleTabChange('pricing')} className="hover:text-white transition">تعرفه‌ها و اشتراک‌ها</button></li>
+              <li><span className="text-stone-500">راهنمای استفاده</span></li>
+              <li><span className="text-stone-500">تماس با پشتیبانی</span></li>
+            </ul>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="text-sm font-bold text-white">خبرنامه هوشمند</h4>
+            <p className="text-xs text-stone-400">آخرین ترندهای معماری شیشه‌ای و نوسانات متریال را دریافت کنید.</p>
+            <div className="flex gap-2">
+              <input
+                type="email"
+                placeholder="ایمیل شما..."
+                className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder:text-stone-500 focus:outline-none focus:border-[#C86D51] w-full"
+              />
+              <button
+                onClick={() => showToast('با موفقیت در خبرنامه عضو شدید.')}
+                className="bg-[#C86D51] hover:bg-[#b05b41] text-white px-4 py-2 rounded-xl text-xs font-bold transition shrink-0"
+              >
+                عضویت
+              </button>
             </div>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-stone-500">
+          <p>© ۱۴۰۳ آرک‌فلو. تمامی حقوق محفوظ است. طراحی شیشه‌ای و هوشمند.</p>
+          <div className="flex items-center gap-6 mt-4 sm:mt-0">
+            <span className="hover:text-stone-300 transition cursor-pointer">حریم خصوصی</span>
+            <span className="hover:text-stone-300 transition cursor-pointer">قوانین و مقررات</span>
+            <span className="hover:text-stone-300 transition cursor-pointer">ارتباط با ما</span>
           </div>
         </div>
       </footer>

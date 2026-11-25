@@ -46,7 +46,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-[#F9F6F0]/95 backdrop-blur-md border-b border-[#E3A38F]/30 shadow-sm transition-all" dir="rtl">
+    <header className="sticky top-0 z-40 bg-white/70 backdrop-blur-2xl border-b border-white/40 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] transition-all" dir="rtl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
         
         {/* Right Side: Logo & Desktop Navigation */}
@@ -55,7 +55,7 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={() => handleNavClick('home')}
             className="flex items-center gap-3 text-start group focus:outline-none shrink-0"
           >
-            <div className="w-11 h-11 rounded-2xl bg-stone-900 overflow-hidden flex items-center justify-center shadow-md group-hover:scale-105 transition">
+            <div className="w-11 h-11 rounded-2xl bg-stone-900 overflow-hidden flex items-center justify-center shadow-md group-hover:scale-105 transition border border-white/30">
               <img src={userImage1} alt="لوگو" className="w-full h-full object-cover" />
             </div>
             <div>
@@ -65,15 +65,15 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           {/* Desktop Nav Tabs */}
-          <nav className="hidden lg:flex items-center gap-1 bg-[#E3A38F]/10 p-1.5 rounded-2xl border border-[#E3A38F]/30">
+          <nav className="hidden lg:flex items-center gap-1 bg-white/60 backdrop-blur-xl p-1.5 rounded-2xl border border-white/60 shadow-sm">
             {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
                   activeTab === item.id
-                    ? 'bg-[#C86D51] text-white shadow-sm'
-                    : 'text-[#2D2826] hover:text-[#C86D51] hover:bg-white/50'
+                    ? 'bg-gradient-to-r from-[#C86D51] to-[#b05b41] text-white shadow-lg shadow-[#C86D51]/20'
+                    : 'text-stone-700 hover:text-stone-900 hover:bg-white/50'
                 }`}
               >
                 {item.label}
@@ -82,100 +82,89 @@ export const Header: React.FC<HeaderProps> = ({
           </nav>
         </div>
 
-        {/* Left Side: Persona Switcher, Cart & Mobile Menu Button */}
+        {/* Left Side: Persona Switcher & Cart */}
         <div className="flex items-center gap-3">
           
           {/* Persona Switcher Dropdown */}
           <div className="relative">
             <button
               onClick={() => setPersonaDropdownOpen(!personaDropdownOpen)}
-              className="flex items-center gap-2 bg-white border border-[#E3A38F]/40 hover:border-[#C86D51] px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-bold text-[#2D2826] shadow-sm transition"
-              aria-label="انتخاب نقش کاربر"
+              className="flex items-center gap-2.5 bg-white/80 backdrop-blur-xl border border-white/60 px-3.5 py-2 rounded-2xl shadow-sm hover:bg-white transition text-xs font-bold text-stone-800"
             >
-              <div className="w-2.5 h-2.5 rounded-full bg-[#C86D51] animate-pulse"></div>
-              <span className="hidden sm:inline">کاربر:</span>
-              <span className="text-[#C86D51]">{currentPersonaObj.name}</span>
-              <ChevronDown className={`w-4 h-4 text-[#6B5B52] transition-transform ${personaDropdownOpen ? 'rotate-180' : ''}`} />
+              <div className="w-7 h-7 rounded-xl bg-[#C86D51]/10 text-[#C86D51] flex items-center justify-center font-black">
+                {currentPersonaObj.name.charAt(0)}
+              </div>
+              <div className="hidden sm:block text-start">
+                <span className="block text-stone-900 font-bold">{currentPersonaObj.name}</span>
+                <span className="block text-[10px] text-stone-500">{currentPersonaObj.title}</span>
+              </div>
+              <ChevronDown className="w-4 h-4 text-stone-400" />
             </button>
 
             {personaDropdownOpen && (
-              <>
-                <div 
-                  className="fixed inset-0 z-30" 
-                  onClick={() => setPersonaDropdownOpen(false)}
-                />
-                <div className="absolute start-0 sm:end-0 sm:start-auto mt-2 w-64 bg-white rounded-2xl shadow-xl border border-[#E3A38F]/30 py-2 z-40 animate-fade-in">
-                  <div className="px-4 py-2 border-b border-[#E3A38F]/20 text-[11px] font-bold text-[#6B5B52]">
-                    انتخاب حالت نمایشی آرک‌فلو:
-                  </div>
-                  {personas.map((p) => (
-                    <button
-                      key={p.id}
-                      onClick={() => {
-                        onSelectPersona(p.id);
-                        setPersonaDropdownOpen(false);
-                      }}
-                      className={`w-full text-start px-4 py-3 text-xs hover:bg-[#F9F6F0] flex flex-col gap-0.5 transition ${
-                        selectedPersona === p.id ? 'bg-[#C86D51]/10 text-[#C86D51] font-bold' : 'text-[#2D2826]'
-                      }`}
-                    >
-                      <span className="font-bold flex items-center justify-between">
-                        {p.name}
-                        {selectedPersona === p.id && <span className="w-1.5 h-1.5 rounded-full bg-[#C86D51]"></span>}
-                      </span>
-                      <span className="text-[11px] text-[#6B5B52]">{p.title}</span>
-                    </button>
-                  ))}
+              <div className="absolute start-0 mt-2 w-56 bg-white/90 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/60 py-2 z-50">
+                <div className="px-3 py-1.5 text-[10px] font-bold text-stone-400 border-b border-stone-100">
+                  انتخاب پروفایل کاربری
                 </div>
-              </>
+                {personas.map(p => (
+                  <button
+                    key={p.id}
+                    onClick={() => {
+                      onSelectPersona(p.id);
+                      setPersonaDropdownOpen(false);
+                    }}
+                    className={`w-full text-start px-4 py-2.5 text-xs transition flex flex-col hover:bg-stone-50 ${
+                      selectedPersona === p.id ? 'bg-[#C86D51]/10 text-[#C86D51] font-bold' : 'text-stone-700'
+                    }`}
+                  >
+                    <span>{p.name} ({p.title})</span>
+                  </button>
+                ))}
+              </div>
             )}
           </div>
 
           {/* Cart Button */}
           <button
             onClick={onOpenCart}
-            className="relative p-2.5 bg-white border border-[#E3A38F]/40 hover:border-[#C86D51] text-[#2D2826] rounded-2xl shadow-sm transition flex items-center justify-center"
-            aria-label="سبد خرید متریال"
+            className="relative p-3 rounded-2xl bg-white/80 backdrop-blur-xl border border-white/60 text-stone-700 hover:text-stone-900 hover:bg-white transition shadow-sm"
+            aria-label="سبد خرید"
           >
-            <ShoppingBag className="w-5 h-5 text-[#2D2826]" />
+            <ShoppingBag className="w-5 h-5 text-[#C86D51]" />
             {cartCount > 0 && (
-              <span className="absolute -top-1.5 -end-1.5 w-5 h-5 bg-[#C86D51] text-white rounded-full text-[11px] font-black flex items-center justify-center shadow-md animate-bounce">
+              <span className="absolute -top-1 -end-1 bg-[#C86D51] text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-md animate-pulse">
                 {cartCount}
               </span>
             )}
           </button>
 
-          {/* Mobile Menu Toggle */}
+          {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2.5 bg-white border border-[#E3A38F]/40 hover:border-[#C86D51] text-[#2D2826] rounded-2xl shadow-sm transition"
+            className="lg:hidden p-3 rounded-2xl bg-white/80 backdrop-blur-xl border border-white/60 text-stone-700 hover:bg-white transition"
             aria-label="منوی موبایل"
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
-
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-b border-[#E3A38F]/30 px-4 py-6 shadow-xl animate-fade-in">
-          <nav className="flex flex-col gap-2">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => handleNavClick(item.id)}
-                className={`w-full text-start px-4 py-3 rounded-xl text-sm font-bold transition flex items-center justify-between ${
-                  activeTab === item.id
-                    ? 'bg-[#C86D51] text-white shadow-sm'
-                    : 'text-[#2D2826] hover:bg-[#F9F6F0]'
-                }`}
-              >
-                <span>{item.label}</span>
-                <ArrowRight className="w-4 h-4 opacity-60 rotate-180" />
-              </button>
-            ))}
-          </nav>
+        <div className="lg:hidden bg-white/95 backdrop-blur-3xl border-b border-white/40 px-6 py-6 space-y-3 shadow-2xl">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => handleNavClick(item.id)}
+              className={`w-full text-start px-4 py-3 rounded-2xl text-sm font-bold transition ${
+                activeTab === item.id
+                  ? 'bg-[#C86D51] text-white shadow-md'
+                  : 'text-stone-700 hover:bg-stone-100'
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
       )}
     </header>
