@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { Persona } from '../types';
 
 interface PricingPageProps {
@@ -58,14 +58,14 @@ export const PricingPage: React.FC<PricingPageProps> = ({ onNavigate, onSelectPe
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16" dir="rtl">
       <div className="text-center max-w-3xl mx-auto space-y-4">
-        <span className="text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1 rounded-full inline-flex items-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5" /> تعرفه‌های شفاف و انعطاف‌پذیر
+        <span className="text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5">
+          <Sparkles className="w-3.5 h-3.5" /> تعرفه‌های شفاف و هوشمند
         </span>
-        <h1 className="text-3xl sm:text-4xl font-black text-stone-900 tracking-tight">
-          پلن مناسب با نیازهای طراحی و ساخت خود را انتخاب کنید
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+          انتخابی متناسب با مقیاس پروژه شما
         </h1>
         <p className="text-stone-600 text-base sm:text-lg">
-          چه یک خانه را بازسازی کنید و چه مدیریت ده‌ها پروژه ساختمانی را بر عهده داشته باشید، ما ابزار مناسب را در اختیارتان می‌گذاریم.
+          چه یک فضای کوچک را بازسازی کنید و چه سازنده ده‌ها واحد مسکونی باشید، آرک‌فلو پلن مناسب شما را دارد.
         </p>
       </div>
 
@@ -73,51 +73,50 @@ export const PricingPage: React.FC<PricingPageProps> = ({ onNavigate, onSelectPe
         {plans.map((plan, index) => (
           <div
             key={index}
-            className={`relative bg-white rounded-2xl p-8 flex flex-col justify-between border transition-all duration-200 ${
+            className={`relative rounded-3xl p-8 flex flex-col justify-between transition-all duration-300 ${
               plan.popular
-                ? 'border-amber-500 shadow-xl ring-2 ring-amber-500/20 scale-105 z-10'
-                : 'border-stone-200 shadow-sm hover:shadow-md'
+                ? 'bg-stone-900 text-white shadow-2xl ring-2 ring-amber-500 scale-105'
+                : 'bg-white text-stone-900 border border-stone-200 shadow-sm hover:shadow-md'
             }`}
           >
             {plan.popular && (
-              <div className="absolute -top-3.5 start-1/2 -translate-x-1/2 bg-amber-500 text-white text-xs font-bold px-4 py-1 rounded-full shadow-sm">
-                محبوب‌ترین انتخاب طراحان
+              <div className="absolute -top-4 start-1/2 -translate-x-1/2 bg-amber-500 text-stone-950 px-4 py-1 rounded-full text-xs font-bold shadow">
+                پرفروش‌ترین پلن
               </div>
             )}
-
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-bold text-stone-900">{plan.name}</h3>
-                <p className="text-sm text-stone-500 mt-1">{plan.period}</p>
+                <h3 className={`text-xl font-bold ${plan.popular ? 'text-white' : 'text-stone-900'}`}>
+                  {plan.name}
+                </h3>
+                <p className={`text-sm mt-2 ${plan.popular ? 'text-stone-300' : 'text-stone-500'}`}>
+                  {plan.description}
+                </p>
               </div>
 
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl sm:text-4xl font-black text-stone-900">{plan.price}</span>
+                <span className="text-3xl sm:text-4xl font-extrabold tracking-tight">{plan.price}</span>
+                <span className={`text-sm ${plan.popular ? 'text-stone-400' : 'text-stone-500'}`}>{plan.period}</span>
               </div>
 
-              <p className="text-stone-600 text-sm leading-relaxed">{plan.description}</p>
-
-              <hr className="border-stone-100" />
+              <hr className={`border-t ${plan.popular ? 'border-stone-800' : 'border-stone-100'}`} />
 
               <ul className="space-y-3">
                 {plan.features.map((feature, fIdx) => (
-                  <li key={fIdx} className="text-sm text-stone-700 flex items-center gap-2.5">
-                    <span className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 text-xs font-bold">✓</span>
-                    {feature}
+                  <li key={fIdx} className="flex items-start gap-3 text-sm">
+                    <CheckCircle2 className={`w-5 h-5 shrink-0 ${plan.popular ? 'text-amber-400' : 'text-amber-600'}`} />
+                    <span className={plan.popular ? 'text-stone-200' : 'text-stone-700'}>{feature}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div className="pt-8 mt-6 border-t border-stone-100">
+            <div className="pt-8">
               <button
-                onClick={() => {
-                  onSelectPersona('sara');
-                  onNavigate('dashboard');
-                }}
-                className={`w-full py-3 px-4 rounded-xl font-medium text-sm transition-colors flex items-center justify-center gap-2 ${
+                onClick={() => onNavigate('dashboard')}
+                className={`w-full py-3.5 px-4 rounded-xl font-bold text-sm transition-all shadow-sm ${
                   plan.popular
-                    ? 'bg-amber-600 hover:bg-amber-700 text-white shadow-sm'
+                    ? 'bg-amber-500 hover:bg-amber-400 text-stone-950'
                     : 'bg-stone-900 hover:bg-stone-800 text-white'
                 }`}
               >
@@ -126,6 +125,23 @@ export const PricingPage: React.FC<PricingPageProps> = ({ onNavigate, onSelectPe
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="bg-amber-50 rounded-3xl p-8 border border-amber-200/60 flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="space-y-2 text-start">
+          <h3 className="text-lg font-bold text-stone-900 flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-amber-700" /> ضمانت بازگشت وجه ۷ روزه
+          </h3>
+          <p className="text-sm text-stone-600">
+            اگر از خروجی‌های هوش مصنوعی و امکانات پلتفرم رضایت نداشتید، تمام مبلغ پرداختی عودت داده می‌شود.
+          </p>
+        </div>
+        <button
+          onClick={() => onNavigate('profiling')}
+          className="bg-amber-700 hover:bg-amber-800 text-white font-bold px-6 py-3 rounded-xl text-sm shrink-0 transition"
+        >
+          شروع آزمون شخصیت معماری
+        </button>
       </div>
     </div>
   );
