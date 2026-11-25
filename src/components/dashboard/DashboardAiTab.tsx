@@ -10,21 +10,21 @@ interface DashboardAiTabProps {
 export const DashboardAiTab: React.FC<DashboardAiTabProps> = ({ currentProject, showToast }) => {
   return (
     <div className="space-y-8" dir="rtl">
-      <div className="bg-gradient-to-br from-[#2C2A29] to-[#433F3E] text-white p-8 rounded-3xl shadow-[0_15px_40px_rgba(212,175,55,0.3)] border border-[#D4AF37]/30 space-y-6">
+      <div className="bg-gradient-to-br from-[#2C2A29] to-[#433F3E] text-white p-8 rounded-3xl shadow-xl space-y-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-[#D4AF37] text-stone-900 flex items-center justify-center font-bold shadow-[0_5px_15px_rgba(212,175,55,0.4)]">
-            <Sparkles className="w-6 h-6 text-stone-900" />
+          <div className="w-12 h-12 rounded-2xl bg-[#C86D51] text-white flex items-center justify-center">
+            <Sparkles className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl sm:text-2xl font-black font-heading text-[#F3E5AB]">دستیار هوشمند معماری آرک‌فلو (ArchFlow AI v4.2)</h2>
+            <h2 className="text-xl sm:text-2xl font-black font-heading">دستیار هوشمند معماری آرک‌فلو (ArchFlow AI v4.2)</h2>
             <p className="text-stone-300 text-xs sm:text-sm mt-1">توصیه‌های اختصاصی بر اساس سبک «{currentProject.styleKey}» و اقلیم منطقه.</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-          <div className="bg-white/10 p-6 rounded-2xl backdrop-blur-sm border border-[#D4AF37]/30 shadow-[0_8px_25px_rgba(212,175,55,0.15)] space-y-3">
-            <h3 className="font-bold text-sm text-[#F3E5AB] flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
+          <div className="bg-white/10 p-6 rounded-2xl backdrop-blur-sm border border-white/10 space-y-3">
+            <h3 className="font-bold text-sm text-[#E3A38F] flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4" />
               <span>بهینه‌سازی نور طبیعی (Natural Lighting)</span>
             </h3>
             <p className="text-xs text-stone-200 leading-relaxed">
@@ -32,9 +32,9 @@ export const DashboardAiTab: React.FC<DashboardAiTabProps> = ({ currentProject, 
             </p>
           </div>
 
-          <div className="bg-white/10 p-6 rounded-2xl backdrop-blur-sm border border-[#D4AF37]/30 shadow-[0_8px_25px_rgba(212,175,55,0.15)] space-y-3">
-            <h3 className="font-bold text-sm text-[#F3E5AB] flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+          <div className="bg-white/10 p-6 rounded-2xl backdrop-blur-sm border border-white/10 space-y-3">
+            <h3 className="font-bold text-sm text-[#E3A38F] flex items-center gap-2">
+              <Sparkles className="w-4 h-4" />
               <span>ترکیب رنگ و متریال پایدار (Eco-Materials)</span>
             </h3>
             <p className="text-xs text-stone-200 leading-relaxed">
@@ -46,7 +46,7 @@ export const DashboardAiTab: React.FC<DashboardAiTabProps> = ({ currentProject, 
         <div className="pt-2">
           <button
             onClick={() => showToast('گزارش جامع مشاوره هوش مصنوعی برای پروژه شما ارسال شد.')}
-            className="bg-[#D4AF37] text-stone-900 px-6 py-3 rounded-xl text-xs font-bold hover:bg-[#c29d2f] transition shadow-[0_8px_20px_rgba(212,175,55,0.35)] cursor-pointer"
+            className="bg-[#C86D51] text-white px-6 py-3 rounded-xl text-xs font-bold hover:bg-[#b05b41] transition shadow-lg"
           >
             درخواست تحلیل تکمیلی پلان و دکوراسیون
           </button>
