@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ShoppingBag, Search, Menu, X, User, Sparkles, Compass, ShieldCheck, ArrowRight, ChevronDown } from 'lucide-react';
 import { Persona } from './types';
-import userImage1 from './assets/user-image-mww6zcgq-1';
+import userImage1 from './assets/user-image-mww8lac8-1';
 
 interface HeaderProps {
   activeTab: string;
