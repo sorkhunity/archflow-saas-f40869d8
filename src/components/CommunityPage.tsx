@@ -93,58 +93,58 @@ export const CommunityPage: React.FC<CommunityPageProps> = ({ onNavigate, onSele
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8" dir="rtl">
       {/* Header Banner */}
-      <div className="bg-gradient-to-br from-[#2C2A29] to-[#43403D] rounded-3xl p-8 sm:p-12 text-white relative overflow-hidden shadow-xl">
+      <div className="bg-gradient-to-br from-[#2C2A29]/90 to-[#43403D]/90 backdrop-blur-md rounded-3xl p-8 sm:p-12 text-white relative overflow-hidden shadow-2xl border border-white/10">
         <div className="absolute end-0 top-0 bottom-0 w-1/3 opacity-10 bg-[radial-gradient(#E3A38F_1px,transparent_1px)] [background-size:16px_16px]"></div>
         <div className="relative z-10 max-w-2xl space-y-4">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C86D51]/20 text-[#E3A38F] text-xs font-bold border border-[#C86D51]/30">
-            <MessageSquare className="w-3.5 h-3.5" />
-            جامعه تخصصی معماری و بازسازی
+          <span className="inline-flex items-center gap-2 bg-[#C86D51]/30 backdrop-blur-md text-[#E3A38F] px-4 py-1.5 rounded-full text-xs font-bold border border-[#C86D51]/40">
+            <MessageSquare className="w-4 h-4" />
+            انجمن تخصصی معماری و طراحی داخلی آرک‌فلو
           </span>
-          <h1 className="text-3xl sm:text-4xl font-black font-heading tracking-tight">
-            تبادل تجربه، پرسش و پاسخ با صدها معمار و سازنده
+          <h1 className="text-3xl sm:text-4xl font-black font-heading leading-tight">
+            پرسش، تبادل نظر و اشتراک تجربه با همکاران و مالکان
           </h1>
-          <p className="text-[#E8E6DF] text-sm sm:text-base leading-relaxed">
-            پرسش‌های فنی خود را مطرح کنید، تجربیات اجرایی دیگران را بخوانید و در پروژه‌های خود از خرد جمعی متخصصان بهره‌مند شوید.
+          <p className="text-stone-300 text-sm sm:text-base leading-relaxed">
+            در این انجمن می‌توانید پیرامون متریال بازار، برآورد بودجه، چالش‌های بازسازی و رندرهای هوش مصنوعی گفتگو کنید.
           </p>
-          <div className="pt-2 flex flex-wrap gap-4">
+          <div className="pt-2">
             <button
               onClick={() => setNewDiscussionOpen(true)}
-              className="bg-[#C86D51] hover:bg-[#b05a41] text-white px-6 py-3 rounded-2xl font-bold transition shadow-lg flex items-center gap-2 cursor-pointer"
+              className="px-6 py-3.5 rounded-2xl bg-[#C86D51] hover:bg-[#b05b41] text-white font-bold text-sm transition shadow-lg flex items-center gap-2.5 cursor-pointer"
             >
               <PlusCircle className="w-5 h-5" />
-              <span>ارسال پرسش یا موضوع جدید</span>
+              طرح پرسش یا ایجاد بحث جدید
             </button>
           </div>
         </div>
       </div>
 
       {successMessage && (
-        <div className="bg-[#EAF3DE] border border-[#276F86]/30 text-[#1B4332] p-4 rounded-2xl flex items-center gap-3 animate-fade-in shadow-sm">
-          <CheckCircle className="w-5 h-5 text-[#276F86]" />
-          <span className="text-sm font-bold">{successMessage}</span>
+        <div className="bg-emerald-500/10 backdrop-blur-md border border-emerald-500/30 text-emerald-800 p-4 rounded-2xl flex items-center gap-3 animate-fade-in">
+          <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
+          <span className="text-xs sm:text-sm font-bold">{successMessage}</span>
         </div>
       )}
 
-      {/* Filter Tags */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+      {/* Filter Tabs */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2">
         <button
           onClick={() => setActiveFilterTagKey('all')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap ${
+          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition whitespace-nowrap cursor-pointer backdrop-blur-md ${
             activeFilterTagKey === 'all'
-              ? 'bg-[#2C2A29] text-white shadow-sm'
-              : 'bg-white text-[#6B5B52] border border-[#E3A38F]/30 hover:border-[#C86D51]'
+              ? 'bg-[#C86D51] text-white shadow-md'
+              : 'bg-white/70 text-[#6B5B52] border border-[#E3A38F]/30 hover:bg-white/90'
           }`}
         >
           همه موضوعات
         </button>
-        {discussionTagKeys.map(tagKey => (
+        {discussionTagKeys.map((tagKey) => (
           <button
             key={tagKey}
             onClick={() => setActiveFilterTagKey(tagKey)}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap ${
+            className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition whitespace-nowrap cursor-pointer backdrop-blur-md ${
               activeFilterTagKey === tagKey
-                ? 'bg-[#2C2A29] text-white shadow-sm'
-                : 'bg-white text-[#6B5B52] border border-[#E3A38F]/30 hover:border-[#C86D51]'
+                ? 'bg-[#C86D51] text-white shadow-md'
+                : 'bg-white/70 text-[#6B5B52] border border-[#E3A38F]/30 hover:bg-white/90'
             }`}
           >
             #{discussionTagLabels[tagKey] || tagKey}
@@ -152,106 +152,26 @@ export const CommunityPage: React.FC<CommunityPageProps> = ({ onNavigate, onSele
         ))}
       </div>
 
-      {/* Discussions Feed */}
+      {/* Discussions List */}
       <DiscussionList
         discussions={filteredDiscussions}
         onSelectPersona={onSelectPersona}
         onLike={handleLike}
       />
 
-      {/* New Discussion Modal */}
-      {newDiscussionOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#FDFBF7] w-full max-w-xl rounded-3xl p-6 sm:p-8 shadow-2xl border border-[#E3A38F]/30 space-y-6 animate-scale-up">
-            <div className="flex items-center justify-between border-b border-[#E3A38F]/30 pb-4">
-              <h3 className="text-lg font-black text-[#2C2A29] flex items-center gap-2">
-                <PlusCircle className="w-5 h-5 text-[#C86D51]" />
-                <span>ایجاد موضوع یا پرسش جدید</span>
-              </h3>
-              <button
-                onClick={() => !isSubmitting && setNewDiscussionOpen(false)}
-                className="text-[#6B5B52] hover:text-[#2C2A29] text-sm font-bold cursor-pointer"
-              >
-                ✕ بستن
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-1.5">
-                <label htmlFor="discussion-title" className="block text-xs font-bold text-[#2C2A29]">
-                  عنوان پرسش یا موضوع <span className="text-[#C86D51]">*</span>
-                </label>
-                <input
-                  id="discussion-title"
-                  type="text"
-                  required
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="مثال: بهترین برند شیرآلات توکار با ضمانت واقعی کدام است؟"
-                  className="w-full px-4 py-3 bg-white rounded-2xl border border-[#E3A38F]/40 text-[#2C2A29] text-sm focus:outline-none focus:ring-2 focus:ring-[#C86D51]"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label htmlFor="discussion-tag" className="block text-xs font-bold text-[#2C2A29]">
-                  دسته‌بندی اصلی
-                </label>
-                <select
-                  id="discussion-tag"
-                  value={selectedTagKey}
-                  onChange={(e) => setSelectedTagKey(e.target.value)}
-                  className="w-full px-4 py-3 bg-white rounded-2xl border border-[#E3A38F]/40 text-[#2C2A29] text-sm focus:outline-none focus:ring-2 focus:ring-[#C86D51]"
-                >
-                  {discussionTagKeys.map(tagKey => (
-                    <option key={tagKey} value={tagKey}>
-                      {discussionTagLabels[tagKey]}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-1.5">
-                <label htmlFor="discussion-content" className="block text-xs font-bold text-[#2C2A29]">
-                  شرح کامل موضوع یا جزئیات پروژه
-                </label>
-                <textarea
-                  id="discussion-content"
-                  rows={4}
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="جزئیات متراژ، بودجه یا چالش اجرایی خود را بنویسید..."
-                  className="w-full px-4 py-3 bg-white rounded-2xl border border-[#E3A38F]/40 text-[#2C2A29] text-sm focus:outline-none focus:ring-2 focus:ring-[#C86D51] resize-none"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#E3A38F]/20">
-                <button
-                  type="button"
-                  disabled={isSubmitting}
-                  onClick={() => setNewDiscussionOpen(false)}
-                  className="px-5 py-2.5 rounded-2xl text-xs font-bold text-[#6B5B52] hover:bg-[#E3A38F]/10 cursor-pointer"
-                >
-                  انصراف
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-[#C86D51] hover:bg-[#b05a41] disabled:opacity-50 text-white px-6 py-2.5 rounded-2xl text-xs font-bold transition flex items-center gap-2 cursor-pointer shadow-md"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      <span>در حال ارسال...</span>
-                    </>
-                  ) : (
-                    <span>انتشار موضوع</span>
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Modal */}
+      <DiscussionModal
+        isOpen={newDiscussionOpen}
+        onClose={() => setNewDiscussionOpen(false)}
+        title={title}
+        setTitle={setTitle}
+        content={content}
+        setContent={setContent}
+        selectedTag={selectedTagKey}
+        setSelectedTag={setSelectedTagKey}
+        isSubmitting={isSubmitting}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 };
