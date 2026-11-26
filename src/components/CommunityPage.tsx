@@ -47,118 +47,114 @@ export const CommunityPage: React.FC<CommunityPageProps> = ({ onNavigate }) => {
 
   const filteredDiscussions = discussions.filter(item => {
     const matchesTag = selectedTag === 'all' || item.tagKeys.includes(selectedTag);
-    const matchesQuery = searchQuery === '' || 
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      item.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.author.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesQuery = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         item.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         item.author.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesTag && matchesQuery;
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8" dir="rtl">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8" dir="rtl">
       {successToast && (
-        <div className="fixed bottom-6 start-6 z-50 bg-emerald-600 text-white px-6 py-3 rounded-2xl shadow-xl flex items-center gap-3 animate-bounce">
-          <CheckCircle2 className="w-5 h-5" />
-          <span className="font-bold text-sm">موضوع شما با موفقیت در انجمن منتشر شد!</span>
+        <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-xl flex items-center gap-3 shadow-sm animate-fade-in">
+          <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+          <span className="text-sm font-medium">بحث جدید با موفقیت در انجمن منتشر شد.</span>
         </div>
       )}
 
-      {/* Hero Banner */}
-      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-stone-900 via-amber-950 to-stone-900 p-8 md:p-12 text-white shadow-2xl">
-        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:16px_16px]"></div>
-        <div className="relative z-10 max-w-2xl space-y-4">
-          <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 text-xs font-semibold inline-flex items-center gap-1.5 border border-amber-500/30">
-            <Users className="w-3.5 h-3.5" />
-            انجمن تخصصی معماری و بازسازی
-          </span>
-          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
-            پرسش، تبادل نظر و تجربیات واقعی ساخت‌وساز
-          </h1>
-          <p className="text-stone-300 text-sm md:text-base leading-relaxed">
-            با صدها معمار، طراح داخلی و صاحب‌خانه تبادل نظر کنید، چالش‌های اجرایی پروژه‌ها را حل کنید و پالت‌های برنده را پیدا کنید.
-          </p>
-          <div className="pt-2">
-            <button
-              onClick={() => setNewDiscussionModal(true)}
-              disabled={isSubmittingGlobal}
-              className="px-6 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-extrabold text-sm transition-all shadow-xl flex items-center gap-2 cursor-pointer disabled:opacity-50"
-            >
-              <Plus className="w-5 h-5" />
-              {isSubmittingGlobal ? 'در حال ثبت...' : 'ارسال موضوع جدید'}
-            </button>
+      {/* Header Banner */}
+      <div className="bg-gradient-to-br from-amber-950 via-stone-900 to-amber-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#d97706_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="space-y-3 max-w-2xl">
+            <div className="inline-flex items-center gap-2 bg-amber-500/20 text-amber-300 px-3 py-1 rounded-full text-xs font-medium border border-amber-500/30">
+              <Users className="w-3.5 h-3.5" />
+              <span>جامعه حرفه‌ای معماران و سازندگان ایران</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">انجمن تبادل نظر و تجربیات بازسازی</h1>
+            <p className="text-stone-300 text-sm sm:text-base leading-relaxed">
+              با همکاران، طراحان و تامین‌کنندگان ارتباط برقرار کنید، پرسش‌های خود را بپرسید و تجربیات اجرایی را به اشتراک بگذارید.
+            </p>
           </div>
+          <button
+            onClick={() => setNewDiscussionModal(true)}
+            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-bold px-6 py-3.5 rounded-2xl shadow-lg hover:shadow-amber-500/25 transition-all flex items-center gap-2.5 shrink-0 text-sm"
+          >
+            <Plus className="w-5 h-5" />
+            <span>ایجاد بحث جدید</span>
+          </button>
         </div>
       </div>
 
-      {/* Search & Filters */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white dark:bg-stone-900 p-4 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-sm">
-        <div className="relative w-full md:w-80">
+      {/* Search & Tags Bar */}
+      <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
+        <div className="relative flex-1 max-w-md">
           <label htmlFor="community-search" className="sr-only">جستجو در انجمن</label>
-          <Search className="absolute start-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+          <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
           <input
             id="community-search"
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="جستجو در پرسش‌ها، موضوعات..."
-            className="w-full ps-10 pe-4 py-2.5 rounded-2xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+            placeholder="جستجو در موضوعات، متریال، پرسش‌ها..."
+            className="w-full bg-white border border-stone-200 rounded-2xl pr-10 pl-4 py-3 text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
           />
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
-          {discussionTagKeys.map(tagKey => {
-            const isSelected = selectedTag === tagKey;
-            return (
-              <button
-                key={tagKey}
-                onClick={() => setSelectedTag(tagKey)}
-                className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all whitespace-nowrap ${
-                  isSelected
-                    ? 'bg-amber-600 text-white shadow-md'
-                    : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700'
-                }`}
-              >
-                {discussionTagLabels[tagKey]}
-              </button>
-            );
-          })}
+        {/* Tags Scroll */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
+          {discussionTagKeys.map(tagKey => (
+            <button
+              key={tagKey}
+              onClick={() => setSelectedTag(tagKey)}
+              className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                selectedTag === tagKey
+                  ? 'bg-amber-600 text-white shadow-md shadow-amber-600/20'
+                  : 'bg-white text-stone-700 border border-stone-200 hover:bg-stone-50 hover:border-stone-300'
+              }`}
+            >
+              <span>{discussionTagLabels[tagKey]}</span>
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Discussion List */}
+      {/* Discussions Feed */}
       <div className="space-y-4">
         {filteredDiscussions.length === 0 ? (
-          <div className="text-center py-16 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 space-y-4">
-            <div className="w-16 h-16 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto">
+          <div className="bg-white rounded-3xl border border-stone-200 p-12 text-center space-y-4 shadow-sm">
+            <div className="w-16 h-16 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto">
               <MessageCircle className="w-8 h-8" />
             </div>
-            <h3 className="text-lg font-bold text-stone-900 dark:text-white">موضوعی یافت نشد</h3>
-            <p className="text-sm text-stone-500 max-w-sm mx-auto">
-              موضوعی با این مشخصات یا دسته‌بندی پیدا نکردید. اولین نفری باشید که این بحث را شروع می‌کند!
+            <h3 className="text-lg font-bold text-stone-900">موضوعی یافت نشد</h3>
+            <p className="text-stone-500 text-sm max-w-md mx-auto">
+              با جستجوی عبارت دیگری امتحان کنید یا موضوع جدیدی را آغاز نمایید.
             </p>
             <button
-              onClick={() => setNewDiscussionModal(true)}
-              className="px-6 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition-all"
+              onClick={() => { setSearchQuery(''); setSelectedTag('all'); }}
+              className="text-amber-700 font-semibold text-sm hover:underline"
             >
-              ایجاد موضوع جدید
+              پاک کردن فیلترها
             </button>
           </div>
         ) : (
           filteredDiscussions.map(item => (
             <DiscussionItem
               key={item.id}
-              {...item}
-              liked={!!likedMap[item.id]}
-              onLike={handleLike}
+              item={item}
+              isLiked={!!likedMap[item.id]}
+              onLike={() => handleLike(item.id)}
             />
           ))
         )}
       </div>
 
+      {/* New Discussion Modal */}
       {newDiscussionModal && (
         <NewDiscussionModal
           onClose={() => setNewDiscussionModal(false)}
           onSubmit={handleCreateNew}
+          isSubmitting={isSubmittingGlobal}
         />
       )}
     </div>
