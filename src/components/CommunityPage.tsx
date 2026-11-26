@@ -154,12 +154,12 @@ export const CommunityPage: React.FC<CommunityPageProps> = ({ onNavigate }) => {
 
       </div>
 
-      <NewDiscussionModal
-        isOpen={newDiscussionModal}
-        onClose={() => setNewDiscussionModal(false)}
-        onSubmit={handleCreateNew}
-        isSubmitting={isSubmittingGlobal}
-      />
+      {newDiscussionModal && (
+        <NewDiscussionModal
+          onClose={() => setNewDiscussionModal(false)}
+          onSubmit={handleCreateNew}
+        />
+      )}
     </div>
   );
 };
