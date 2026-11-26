@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Sparkles, Loader2 } from 'lucide-react';
 import { discussionTagLabels, discussionTagKeys, DiscussionTagKey } from '../data/communityData';
 
@@ -48,8 +49,8 @@ export const NewDiscussionModal: React.FC<NewDiscussionModalProps> = ({ onClose,
     }, 600);
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm animate-fade-in" dir="rtl" onClick={onClose}>
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm animate-fade-in" dir="rtl" onClick={onClose}>
       <div 
         role="dialog"
         aria-modal="true"
@@ -155,6 +156,7 @@ export const NewDiscussionModal: React.FC<NewDiscussionModalProps> = ({ onClose,
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
