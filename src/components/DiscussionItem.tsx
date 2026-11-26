@@ -1,4 +1,5 @@
 import React from 'react';
+import React from 'react';
 import { MessageCircle, ThumbsUp, Award } from 'lucide-react';
 import { discussionTagLabels } from '../data/mockData';
 

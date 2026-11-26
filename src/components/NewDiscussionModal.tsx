@@ -50,68 +50,76 @@ export const NewDiscussionModal: React.FC<NewDiscussionModalProps> = ({ onClose,
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm animate-fade-in" dir="rtl" onClick={onClose}>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm animate-fade-in" dir="rtl">
       <div 
         role="dialog"
         aria-modal="true"
-        aria-label="ایجاد بحث جدید"
-        className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl border border-stone-200 space-y-6 overflow-hidden relative"
-        onClick={e => e.stopPropagation()}
+        aria-label="ایجاد موضوع جدید"
+        className="bg-white dark:bg-stone-900 rounded-3xl max-w-xl w-full p-6 md:p-8 shadow-2xl border border-stone-200 dark:border-stone-800 space-y-6"
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-bold text-stone-900">طرح سوال یا بحث جدید</h3>
-              <p className="text-xs text-stone-500">موضوع خود را با جامعه معماران به اشتراک بگذارید</p>
+              <h2 className="text-xl font-bold text-stone-900 dark:text-white">ارسال موضوع جدید به انجمن</h2>
+              <p className="text-xs text-stone-500">سوال یا تجربه خود را با سایر معماران به اشتراک بگذارید</p>
             </div>
           </div>
-          <button
+          <button 
             type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onClose();
-            }}
+            onClick={onClose}
             aria-label="بستن پنجره"
-            className="w-9 h-9 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-500 flex items-center justify-center transition-all cursor-pointer relative z-20"
+            className="w-9 h-9 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-500 hover:text-stone-900 dark:hover:text-white"
           >
-            <X className="w-5 h-5 pointer-events-none" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <label htmlFor="modal-discussion-title" className="block text-xs font-bold text-stone-700">عنوان بحث یا سوال <span className="text-rose-500">*</span></label>
+            <label htmlFor="modal-discussion-title" className="block text-xs font-bold text-stone-700 dark:text-stone-300">
+              عنوان موضوع <span className="text-red-500">*</span>
+            </label>
             <input
               ref={titleInputRef}
               id="modal-discussion-title"
               type="text"
-              required
               value={title}
-              onChange={e => setTitle(e.target.value)}
-              placeholder="مثلا: بهترین متریال ضد آب برای بالکن‌های رو به آفتاب چیست؟"
-              className="w-full px-4 py-3 rounded-2xl border border-stone-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-stone-50/50"
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="مثلا: بهترین متریال برای کفپوش پذیرایی..."
+              maxLength={120}
+              required
+              className="w-full px-4 py-3 rounded-2xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="modal-discussion-content" className="block text-xs font-bold text-stone-700">توضیحات کامل <span className="text-rose-500">*</span></label>
+            <div className="flex justify-between items-center">
+              <label htmlFor="modal-discussion-content" className="block text-xs font-bold text-stone-700 dark:text-stone-300">
+                متن پرسش یا توضیحات <span className="text-red-500">*</span>
+              </label>
+              <span className="text-[11px] text-stone-400">
+                {content.length}/1000 کاراکتر
+              </span>
+            </div>
             <textarea
               id="modal-discussion-content"
-              required
-              rows={4}
               value={content}
-              onChange={e => setContent(e.target.value)}
-              placeholder="جزئیات پروژه، ابعاد، شرایط آب و هوایی یا بودجه مورد نظر را بنویسید..."
-              className="w-full px-4 py-3 rounded-2xl border border-stone-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-stone-50/50 resize-none"
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="جزئیات پروژه، سوال یا نکته اجرایی را با دقت بنویسید..."
+              rows={4}
+              maxLength={1000}
+              required
+              className="w-full px-4 py-3 rounded-2xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-xs font-bold text-stone-700">انتخاب دسته‌بندی‌ها (حداقل یک مورد)</label>
+            <label className="block text-xs font-bold text-stone-700 dark:text-stone-300">
+              انتخاب دسته‌بندی‌ها (حداقل یک مورد)
+            </label>
             <div className="flex flex-wrap gap-2 pt-1">
               {discussionTagKeys.filter(k => k !== 'all').map(tagKey => {
                 const isSelected = selectedTags.includes(tagKey);
@@ -119,11 +127,19 @@ export const NewDiscussionModal: React.FC<NewDiscussionModalProps> = ({ onClose,
                   <button
                     key={tagKey}
                     type="button"
+                    role="button"
+                    tabIndex={0}
                     onClick={() => toggleTag(tagKey)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleTag(tagKey);
+                      }
+                    }}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                       isSelected
-                        ? 'bg-amber-600 text-white shadow-sm'
-                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                        ? 'bg-amber-600 text-white shadow-md'
+                        : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200'
                     }`}
                   >
                     {discussionTagLabels[tagKey]}
@@ -133,25 +149,27 @@ export const NewDiscussionModal: React.FC<NewDiscussionModalProps> = ({ onClose,
             </div>
           </div>
 
-          <div className="pt-4 flex items-center justify-end gap-3 border-t border-stone-100">
+          <div className="pt-4 flex items-center justify-end gap-3">
             <button
               type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onClose();
-              }}
-              className="px-5 py-2.5 rounded-xl bg-stone-100 text-stone-700 font-bold text-xs hover:bg-stone-200 transition-all cursor-pointer"
+              onClick={onClose}
+              className="px-5 py-2.5 rounded-2xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-bold text-sm hover:bg-stone-200 transition-all"
             >
               انصراف
             </button>
             <button
               type="submit"
               disabled={isSubmitting || !title.trim() || !content.trim()}
-              className="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-stone-950 font-bold text-xs transition-all flex items-center gap-2 cursor-pointer shadow-md"
+              className="px-6 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-sm transition-all shadow-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-              انتشار بحث در انجمن
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>در حال انتشار...</span>
+                </>
+              ) : (
+                'انتشار موضوع'
+              )}
             </button>
           </div>
         </form>
