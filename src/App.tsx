@@ -112,15 +112,6 @@ export default function App() {
   return (
     <div className="min-h-dvh bg-gradient-to-br from-[#1a1817] via-[#242120] to-[#2e2a28] text-stone-100 flex flex-col font-sans selection:bg-[#C86D51] selection:text-white relative overflow-x-hidden">
       
-      {/* Traditional Persian Architectural Blueprint Pattern Overlay */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.06] z-0" 
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'%3E%3Cpath d='M30 30L0 0h60L30 30zm0 0L0 60h60L30 30zM15 15l15 15 15-15L30 0 15 15zm0 30l15-15 15 15L30 60 15 45z'/%3E%3C/g%3E%3C/svg%3E")`,
-          backgroundSize: '40px 40px'
-        }}
-      />
-
       {/* Background ambient glowing glass orbs */}
       <div className="absolute top-20 start-10 w-96 h-96 bg-[#C86D51]/15 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute top-1/2 end-10 w-[30rem] h-[30rem] bg-[#E3A38F]/10 rounded-full blur-[150px] pointer-events-none" />
